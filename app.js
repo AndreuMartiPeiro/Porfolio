@@ -131,6 +131,14 @@
 
     // Tabs
     tabsEl.innerHTML = '';
+
+    if (projectId === 'zaragoza') {
+      if (typeof window.renderZaragozaProject === 'function') {
+        window.renderZaragozaProject(contentEl);
+      }
+      return;
+    }
+
     project.sections.forEach((section, i) => {
       const tab = document.createElement('button');
       tab.className = 'section-tab' + (i === 0 ? ' active' : '');
