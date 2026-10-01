@@ -72,6 +72,9 @@
     if (!grid) return;
     grid.innerHTML = '';
 
+    const statProjects = document.getElementById('stat-projects');
+    if (statProjects) statProjects.textContent = PROJECTS.length;
+
     PROJECTS.forEach((project, index) => {
       const card = document.createElement('div');
       card.className = 'project-card';

@@ -333,5 +333,16 @@ La <strong>zona verde sombreada</strong> marca la ventana de crucero operativo d
         ]
       }
     ]
+  },
+  {
+    id: "zaragoza",
+    title: "Demanda Aeropuerto de Zaragoza",
+    subtitle: "Análisis histórico de tráfico y previsión de demanda con modelos econométricos (2025–2050)",
+    description: "Estudio exhaustivo del tráfico de pasajeros en el Aeropuerto de Zaragoza (ZAZ), modelización econométrica vinculada al PIB y proyección de demanda hasta 2050 mediante múltiples escenarios de crecimiento.",
+    tags: ["Transporte Aéreo", "Econometría", "Previsión de Demanda", "AENA"],
+    image: "img/zaragoza.png",
+    status: "Completado",
+    date: "2026",
+    sections: []
   }
 ];
