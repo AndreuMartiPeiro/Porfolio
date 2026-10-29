@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tomahawk CFD</title>
+<meta name="description" content="Análisis aerodinámico CFD del misil Tomahawk a escala 1:20 en ANSYS Fluent: Mach 0,72 a nivel del mar. Visor 3D interactivo de resultados, coeficientes, validación y comparación con el empuje del motor F107.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>if (/[?&]embed/.test(location.search)) document.documentElement.classList.add("embed");</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --ink: #0f172a; --muted: #5b6474; --line: #e2e6ec;
+    --accent: #c08a3e; --accent-ink: #8a5c1f; --stage: #0f172a; --stage-ink: #e6ebf2; --stage-muted: #94a0b4;
+    --s1: #2a78d6; --s2: #eb6834; --grid: #e7e9ee;
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1120; --surface: #111a2e; --ink: #e6ebf2; --muted: #94a0b4; --line: #1f2a40;
+      --accent: #d6a45a; --accent-ink: #e2b878; --stage: #070c18; --s1: #3987e5; --s2: #d95926; --grid: #1f2a40;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1120; --surface: #111a2e; --ink: #e6ebf2; --muted: #94a0b4; --line: #1f2a40;
+    --accent: #d6a45a; --accent-ink: #e2b878; --stage: #070c18; --s1: #3987e5; --s2: #d95926; --grid: #1f2a40;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 Inter, system-ui, sans-serif; }
+  a { color: var(--accent-ink); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  header.hero { background: var(--stage); color: var(--stage-ink); }
+  .hero .wrap { padding-top: 36px; padding-bottom: 18px; }
+  .eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-size: clamp(30px, 5vw, 50px); line-height: 1.05; margin: 12px 0 10px; letter-spacing: -.02em; }
+  .lede { max-width: 720px; color: #b7c1d1; margin: 0; }
+  .back { font: 13px var(--mono); color: #9fb0c8; text-decoration: none; }
+
+  /* --- visor --- */
+  .stage { position: relative; height: min(70vh, 640px); min-height: 420px; background: var(--stage); }
+  .stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .panel { position: absolute; top: 12px; left: 12px; width: 236px; background: rgba(13,20,38,.88); border: 1px solid #24304d;
+    border-radius: 12px; padding: 12px 14px; color: var(--stage-ink); font-size: 13px; backdrop-filter: blur(6px); }
+  .panel h4 { margin: 0 0 6px; font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--stage-muted); }
+  .panel label { display: flex; align-items: center; gap: 8px; padding: 2px 0; cursor: pointer; }
+  .panel select { width: 100%; font: 13px Inter, sans-serif; color: var(--stage-ink); background: #18223b; border: 1px solid #2a3656; border-radius: 8px; padding: 5px 8px; margin-bottom: 10px; }
+  .panel .grp + .grp { margin-top: 8px; }
+  .legends { position: absolute; right: 12px; bottom: 12px; display: grid; gap: 8px; width: 230px; }
+  .legend { background: rgba(13,20,38,.88); border: 1px solid #24304d; border-radius: 10px; padding: 8px 10px 6px; color: var(--stage-ink); }
+  .legend .t { font-size: 12px; margin-bottom: 4px; }
+  .legend canvas { width: 100%; height: 10px; border-radius: 3px; display: block; }
+  .legend .ticks { display: flex; justify-content: space-between; font: 11px var(--mono); color: var(--stage-muted); margin-top: 3px; }
+  .tip { position: absolute; pointer-events: none; background: #f8fafc; color: #0f172a; border-radius: 8px; padding: 6px 9px; font: 12px/1.35 var(--mono);
+    box-shadow: 0 6px 18px rgba(0,0,0,.35); transform: translate(12px, 12px); display: none; white-space: nowrap; }
+  .views { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding: 14px 0 6px; }
+  .views button { font: 500 13px Inter, sans-serif; color: var(--stage-ink); background: #1b2540; border: 1px solid #2a3656; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+  .views button:hover, .views button[aria-pressed="true"] { border-color: var(--accent); color: #fff; }
+  .viewer-hint { font: 12px var(--mono); color: #7d8aa0; text-align: center; padding: 0 0 22px; }
+  .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--stage-muted); font: 13px var(--mono); }
+  @media (max-width: 720px) {
+    .stage { height: 62vh; }
+    .panel { position: static; width: auto; border-radius: 0; border-left: 0; border-right: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+    .panel h4 { grid-column: 1 / -1; }
+    .legends { left: 12px; right: 12px; width: auto; grid-template-columns: 1fr 1fr; }
+  }
+
+  /* --- contenido --- */
+  section { padding: 44px 0 6px; }
+  h2 { font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0 0 20px; max-width: 760px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .kpi b { display: block; font: 600 26px/1.1 Inter, sans-serif; font-variant-numeric: tabular-nums; }
+  .kpi span { color: var(--muted); font-size: 13px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .card h3 { margin: 0 0 10px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+  .card h3::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
+  .card dl { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; margin: 0; font-size: 14px; }
+  .card dt { color: var(--muted); }
+  .card dd { margin: 0; text-align: right; font-family: var(--mono); font-size: 13px; }
+  .card p { margin: 0 0 8px; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  th, td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  th { font-weight: 600; color: var(--muted); font-size: 13px; }
+  tr:last-child td { border-bottom: 0; }
+  .tablewrap { overflow-x: auto; }
+  .ok { color: #0ca30c; font-weight: 600; }
+  /* barra de desglose */
+  .bar { display: flex; gap: 2px; height: 34px; margin: 6px 0 8px; }
+  .bar div { border-radius: 4px; }
+  .barlbl { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); gap: 12px; flex-wrap: wrap; }
+  .barlbl i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  /* gráfico convergencia */
+  .chart { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 14px 8px; }
+  .chart svg { width: 100%; height: 260px; display: block; }
+  .chart .ttl { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+  .chart .tip { transform: translate(10px, -40px); }
+  .placeholder { display: grid; place-items: center; min-height: 200px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); font: 13px var(--mono); text-align: center; padding: 16px; background: var(--surface); }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  ul.lim { margin: 0; padding-left: 20px; } ul.lim li { margin: 4px 0; }
+  .callout { border-left: 3px solid var(--accent); background: var(--surface); padding: 14px 16px; border-radius: 0 12px 12px 0; margin-top: 14px; }
+  figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption { padding: 10px 14px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+  .embed body { background: var(--stage); }
+  .embed header.hero > .wrap, .embed .viewer-hint, .embed main { display: none; }
+  .embed .stage { height: calc(100vh - 58px); min-height: 0; }
+  .embed .views { padding: 10px 0; }
+  footer { color: var(--muted); font-size: 13px; padding: 40px 0 48px; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="../index.html">← Modelo CAD</a>
+    <div class="eyebrow" style="margin-top:14px">ANSYS Fluent · CFD · Aerodinámica</div>
+    <h1>Tomahawk: análisis aerodinámico</h1>
+    <p class="lede">Flujo externo compresible alrededor del modelo a escala 1:20 en crucero nominal: <b>Mach 0,72 a nivel del mar</b>, la misma condición del análisis off-design del motor F107. Explora los resultados en 3D.</p>
+  </div>
+  <div class="stage" id="stage">
+    <div class="loading" id="loading">cargando resultados…</div>
+    <div class="tip" id="tip"></div>
+    <div class="legends" id="legends"></div>
+    <div class="panel" id="panel">
+      <h4>Resultado</h4>
+      <label><input type="radio" name="modo" value="mach" checked> Número de Mach</label>
+      <label><input type="radio" name="modo" value="presion"> Presión alrededor del misil</label>
+      <label><input type="radio" name="modo" value="psup"> Presión sobre el misil</label>
+      <label><input type="radio" name="modo" value="fric"> Fricción sobre el misil</label>
+      <label><input type="radio" name="modo" value="lineas"> Líneas de corriente</label>
+    </div>
+  </div>
+  <div class="views" role="group" aria-label="Vistas predefinidas">
+    <button data-view="iso" aria-pressed="true">Isométrica</button>
+    <button data-view="lateral">Lateral</button>
+    <button data-view="planta">Planta</button>
+    <button data-view="frontal">Frontal</button>
+    <button data-view="cola">Cola</button>
+  </div>
+  <div class="viewer-hint">arrastra para girar · rueda o pellizco para acercar · pasa el cursor para leer valores</div>
+</header>
+
+<main class="wrap">
+  <section>
+    <h2>Resultados principales</h2>
+    <p class="sub">Coeficientes referidos al área frontal del fuselaje (A = 531 mm², Ø 26 mm). Momento respecto al centro de gravedad (51 % de L), referido al diámetro.</p>
+    <div class="kpis">
+      <div class="kpi"><b>0,336</b><span>Coef. de resistencia Cd</span></div>
+      <div class="kpi"><b>0,216</b><span>Coef. de sustentación Cl (α = 0°)</span></div>
+      <div class="kpi"><b>0,228</b><span>Coef. de momento Cm (CdG)</span></div>
+      <div class="kpi"><b>6,55 N</b><span>Resistencia del modelo</span></div>
+      <div class="kpi"><b>0,91</b><span>Mach local máximo (sin zona supersónica)</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>¿De dónde viene la resistencia?</h2>
+    <p class="sub">Casi la mitad de la resistencia es fricción: el misil es esbelto (L/D ≈ 11) y tiene mucha superficie mojada (279 cm²) frente a su sección frontal (5,3 cm²).</p>
+    <div class="card">
+      <div class="bar" role="img" aria-label="Cd total 0,336: presión 0,175 (52 %), fricción 0,161 (48 %)">
+        <div style="flex:0.1751;background:var(--s1)"></div>
+        <div style="flex:0.1607;background:var(--s2)"></div>
+      </div>
+      <div class="barlbl">
+        <span><i style="background:var(--s1)"></i>Presión · Cd = 0,175 · 52 %</span>
+        <span><i style="background:var(--s2)"></i>Fricción · Cd = 0,161 · 48 %</span>
+        <span>Total · Cd = 0,336</span>
+      </div>
+      <p class="sub" style="margin:10px 0 0;font-size:14px">La sustentación sale casi por completo de presión (Cl presión 0,2159 frente a 0,0000 de fricción): se debe a la curvatura de las alas (≈ 1 %) y a que van ligeramente por encima del eje.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Validación del cálculo</h2>
+    <p class="sub">Comprobaciones para poder fiarse de los números.</p>
+    <div class="two">
+      <div class="card"><h3>Comprobaciones físicas</h3><dl>
+        <dt>Presión de remanso (teoría isentrópica)</dt><dd>143,1 kPa</dd>
+        <dt>Presión máxima en la ojiva (CFD)</dt><dd>142,8 kPa <span class="ok">−0,2 %</span></dd>
+        <dt>Igual a la P1 del motor a M 0,72</dt><dd>143,2 kPa</dd>
+        <dt>y⁺ medio / máximo en el misil</dt><dd>30,9 / 75,4</dd>
+        <dt>Fuerza lateral (debe ser ≈ 0)</dt><dd>Cz = −0,003</dd>
+        <dt>Oscilación del Cd (últimas 200 it.)</dt><dd>&lt; 0,01 %</dd></dl></div>
+      <div class="chart" id="conv">
+        <p class="ttl">Convergencia del Cd</p>
+        <svg viewBox="0 0 600 260" preserveAspectRatio="none" aria-label="Evolución del Cd durante 1000 iteraciones hasta 0,336"></svg>
+        <div class="tip"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <section>
+    <h2>Configuración del caso</h2>
+    <div class="cards">
+      <div class="card"><h3>Geometría y dominio</h3><dl>
+        <dt>Modelo</dt><dd>Tomahawk 1:20 · L 280,8 mm</dd>
+        <dt>Bordes de salida</dt><dd>truncados a 0,25 mm</dd>
+        <dt>Dominio (caja)</dt><dd>3,78 × 1,75 × 1,83 m</dd>
+        <dt>Delante / detrás / lados</dt><dd>1,0 / 2,5 / 0,85 m</dd></dl></div>
+      <div class="card"><h3>Malla</h3><dl>
+        <dt>Celdas</dt><dd>471 730</dd>
+        <dt>Tipo</dt><dd>tetraedros + 5 capas de prismas</dd>
+        <dt>Tamaño en el misil</dt><dd>3 mm (curvatura 0,6 mm)</dd>
+        <dt>Primera capa</dt><dd>0,12 mm (y⁺ ≈ 31)</dd></dl></div>
+      <div class="card"><h3>Física y solver</h3><dl>
+        <dt>Solver</dt><dd>presión, acoplado, estacionario</dd>
+        <dt>Aire</dt><dd>gas ideal + Sutherland</dd>
+        <dt>Turbulencia</dt><dd>k-ω SST</dd>
+        <dt>Discretización</dt><dd>2.º orden</dd></dl></div>
+      <div class="card"><h3>Condiciones</h3><dl>
+        <dt>Contorno exterior</dt><dd>pressure far-field</dd>
+        <dt>Mach / presión / temperatura</dt><dd>0,72 · 101 325 Pa · 288,15 K</dd>
+        <dt>Velocidad</dt><dd>244,9 m/s</dd>
+        <dt>Ángulo de ataque</dt><dd>0°</dd></dl></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Imágenes de postproceso</h2>
+    <p class="sub">Renderizados en ANSYS CFD-Post. <a href="../docs/Informe_CFD_Tomahawk.pdf">Informe técnico completo (PDF)</a>.</p>
+    <div class="two">
+      <figure><img src="img/cfdpost_flujo_3q.png" alt="Líneas de flujo sobre la superficie coloreadas por esfuerzo cortante" loading="lazy"><figcaption>Líneas de flujo sobre la piel (esfuerzo cortante): salen en estrella del punto de remanso y se desvían alrededor de la raíz del ala.</figcaption></figure>
+      <figure><img src="img/cfdpost_cp.png" alt="Coeficiente de presión sobre el misil" loading="lazy"><figcaption>Coeficiente de presión: Cp ≈ 1 en la punta (remanso) y succión máxima (Cp ≈ −0,63) en el hombro de la ojiva.</figcaption></figure>
+      <figure><img src="img/cfdpost_flujo_lateral.png" alt="Vista lateral de las líneas de flujo sobre la superficie" loading="lazy"><figcaption>Vista lateral: fricción máxima en la ojiva y perturbación local en la unión ala-fuselaje y en la cola.</figcaption></figure>
+      <figure><img src="img/cfdpost_presion.png" alt="Presión estática sobre el misil" loading="lazy"><figcaption>Presión estática sobre el misil [Pa], CFD-Post.</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>Limitaciones</h2>
+    <ul class="lim">
+      <li><b>Escala 1:20.</b> Reynolds unas 20 veces menor que el real: la fricción del modelo es mayor (corregida arriba de forma aproximada).</li>
+      <li><b>Bordes de salida truncados</b> a 0,25 mm para poder mallar: añaden ≈ 0,007 al Cd (≈ 2 %), resultado ligeramente conservador.</li>
+      <li><b>RANS estacionario</b>: no resuelve el desprendimiento de remolinos tras los bordes romos ni tras la base.</li>
+      <li><b>Geometría simplificada</b>: sin toma de aire, tobera ni juntas; un único ángulo de ataque (0°).</li>
+      <li><b>Malla limitada</b> por la licencia Student (≈ 1 millón de celdas); no se ha hecho estudio de independencia de malla.</li>
+    </ul>
+  </section>
+
+  <footer>ANSYS Discovery · Meshing · Fluent 2026 R1 (Student) · visor 3D con three.js a partir de la solución exportada (EnSight) y procesada con PyVista</footer>
+</main>
+
+<script src="data/data.js"></script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+
+THREE.ColorManagement.enabled = false;
+const SEQ = ['#0000ff', '#0055ff', '#00aaff', '#00ffff', '#00ff80', '#00ff00', '#80ff00', '#ffff00', '#ffaa00', '#ff5500', '#ff0000'];   // arcoíris de Ansys
+const DIV = SEQ;
+const RANGES = { wall: {}, field: {} };   // rango local (mín–máx de los datos), como CFD-Post
+const LABEL = { cp: ['Cp', ''], mach: ['Mach', ''], p: ['Presión estática', 'kPa'], vel: ['Velocidad', 'm/s'], cf: ['Cf', ''] };
+const NOSE_X = -140.23;   // punta de la ojiva en coordenadas locales (mm)
+
+function hex(h) { return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+function lutData(stops) {
+  const s = stops, d = new Uint8Array(256 * 4);
+  for (let i = 0; i < 256; i++) {
+    const t = i / 255 * (s.length - 1), k = Math.min(Math.floor(t), s.length - 2), f = t - k;
+    const a = hex(s[k]), b = hex(s[k + 1]);
+    for (let c = 0; c < 3; c++) d[i * 4 + c] = Math.round(a[c] + (b[c] - a[c]) * f);
+    d[i * 4 + 3] = 255;
+  }
+  return d;
+}
+const LUTS = {};
+function lut() {
+  if (!LUTS.r) { const t = new THREE.DataTexture(lutData(SEQ), 256, 1); t.magFilter = t.minFilter = THREE.LinearFilter; t.needsUpdate = true; LUTS.r = t; }
+  return LUTS.r;
+}
+function colorAt(range, v) {
+  const [a, b] = range, d = lutData(SEQ);
+  const i = Math.max(0, Math.min(255, Math.round((v - a) / (b - a) * 255)));
+  return [d[i * 4] / 255, d[i * 4 + 1] / 255, d[i * 4 + 2] / 255];
+}
+
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(getComputedStyle(document.documentElement).getPropertyValue('--stage').trim() || '#0f172a');
+stage.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 1, 20000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.target.set(40, 0, 0);
+
+const VS = `attribute float scalar; varying float vS; varying vec3 vN; varying vec3 vV; varying vec3 vP;
+void main(){ vS = scalar; vP = position; vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = -mv.xyz; gl_Position = projectionMatrix * mv; }`;
+const FS = `uniform sampler2D lut; uniform float vmin, vmax, lit, useFlat, uHalf; varying float vS; varying vec3 vN; varying vec3 vV; varying vec3 vP;
+void main(){ if (uHalf > 0.5 && vP.z > 0.0) discard; float t = clamp((vS - vmin) / (vmax - vmin), 0.0, 1.0);
+  vec3 c = useFlat > 0.5 ? vec3(0.62, 0.65, 0.70) : texture2D(lut, vec2(t, 0.5)).rgb;
+  if (lit > 0.5) { vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n; vec3 L = normalize(vec3(0.3, 0.8, 0.6));
+    float d = max(dot(n, L), 0.0); float h = pow(max(dot(n, normalize(L + normalize(vV))), 0.0), 40.0);
+    c = c * (0.5 + 0.55 * d) + 0.10 * h; }
+  gl_FragColor = vec4(c, 1.0); }`;
+
+const objs = {}, lineMats = []; let manifest;
+const MODES = {
+  mach:    { show: ['misil', 'plano_alas', 'plano_vertical'], wall: 'none', field: 'mach', title: 'Número de Mach' },
+  presion: { show: ['misil', 'plano_alas', 'plano_vertical'], wall: 'none', field: 'p', title: 'Presión estática' },
+  psup:    { show: ['misil'], wall: 'p', title: 'Presión sobre el misil' },
+  fric:    { show: ['misil'], wall: 'cf', title: 'Fricción sobre el misil' },
+  lineas:  { show: ['misil', 'plano_vertical', 'streamlines'], wall: 'none', field: 'mach', half: true, view: 'isoB', title: 'Líneas de corriente · Mach' } };
+const state = { mode: 'mach' };
+
+function arrays(buf, layout) {
+  const out = {};
+  for (const [k, l] of Object.entries(layout))
+    out[k] = l.dtype === 'uint32' ? new Uint32Array(buf, l.offset, l.count) : new Float32Array(buf, l.offset, l.count);
+  return out;
+}
+
+const B64 = window.CFD_DATA;
+function b64buf(s) { const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
+async function getBin(f) { return B64 ? b64buf(B64.bins[f]) : (await fetch('data/' + f)).arrayBuffer(); }
+async function load() {
+  manifest = B64 ? B64.manifest : await (await fetch('data/manifest.json')).json();
+  const datas = await Promise.all(manifest.objects.map(async o => ({ o, A: arrays(await getBin(o.file), o.layout) })));
+  for (const { o, A } of datas) {
+    if (o.kind === 'lines') continue;
+    const grp = o.id === 'misil' ? RANGES.wall : RANGES.field;
+    for (const k of o.vars) { let lo = Infinity, hi = -Infinity; for (const v of A[k]) { if (v < lo) lo = v; if (v > hi) hi = v; }
+      grp[k] = grp[k] ? [Math.min(grp[k][0], lo), Math.max(grp[k][1], hi)] : [lo, hi]; }
+  }
+  for (const { o, A } of datas) {
+    if (o.kind === 'lines') {
+      const off = A.offsets, idx = [], col = new Float32Array(A.mach.length * 3);
+      for (let s = 0; s + 1 < off.length; s++) for (let i = off[s]; i < off[s + 1] - 1; i++) if (A.position[i * 3 + 2] <= 0.5 && A.position[i * 3 + 5] <= 0.5) idx.push(i, i + 1);
+      for (let i = 0; i < A.mach.length; i++) col.set(colorAt(RANGES.field.mach, A.mach[i]), i * 3);
+      const pos = new Float32Array(idx.length * 3), cc = new Float32Array(idx.length * 3);
+      idx.forEach((v, j) => { pos.set(A.position.subarray(v * 3, v * 3 + 3), j * 3); cc.set(col.subarray(v * 3, v * 3 + 3), j * 3); });
+      const g = new LineSegmentsGeometry(); g.setPositions(pos); g.setColors(cc);
+      const mat = new LineMaterial({ vertexColors: true, linewidth: 1.8, worldUnits: false });
+      const m = new LineSegments2(g, mat); lineMats.push(mat);
+      objs[o.id] = { mesh: m, o, A }; scene.add(m); continue;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(A.position, 3));
+    g.setIndex(new THREE.BufferAttribute(A.index, 1)); g.computeVertexNormals();
+    const isWall = o.id === 'misil';
+    const mat = new THREE.ShaderMaterial({ vertexShader: VS, fragmentShader: FS, side: THREE.DoubleSide,
+      uniforms: { lut: { value: null }, vmin: { value: 0 }, vmax: { value: 1 }, lit: { value: isWall ? 1 : 0 }, useFlat: { value: 0 }, uHalf: { value: 0 } },
+      polygonOffset: !isWall, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+    const m = new THREE.Mesh(g, mat);
+    objs[o.id] = { mesh: m, o, A, isWall }; scene.add(m);
+  }
+  applyMode('mach'); setView('iso', true); resize();
+  setTimeout(() => {
+  const q = new URLSearchParams(location.search);
+  if (q.get('modo') && MODES[q.get('modo')]) { const r = document.querySelector(`[name=modo][value=${q.get('modo')}]`); r.checked = true; r.dispatchEvent(new Event('change')); }
+  if (q.get('view')) setView(q.get('view'));
+  }, 300); document.getElementById('loading').remove(); resize();
+}
+
+function setScalar(ob, key, range) {
+  const mat = ob.mesh.material;
+  if (!key || key === 'none' || !ob.A[key]) { mat.uniforms.useFlat.value = 1; ob.key = null; return; }
+  const g = ob.mesh.geometry; let at = g.getAttribute('scalar');
+  if (!at) { at = new THREE.BufferAttribute(new Float32Array(ob.A[key].length), 1); at.setUsage(THREE.DynamicDrawUsage); g.setAttribute('scalar', at); }
+  at.array.set(ob.A[key]); at.needsUpdate = true;
+  mat.uniforms.useFlat.value = 0; mat.uniforms.lut.value = lut();
+  [mat.uniforms.vmin.value, mat.uniforms.vmax.value] = range; ob.key = key;
+}
+function rangeFor(m, key, isWall) {
+  if (m.shared) { const a = RANGES.wall[key], b = RANGES.field[key]; return [Math.min(a[0], b[0]), Math.max(a[1], b[1])]; }
+  return (isWall ? RANGES.wall : RANGES.field)[key];
+}
+function applyMode(name) {
+  const m = MODES[name]; state.mode = name; let leg = null;
+  for (const [id, ob] of Object.entries(objs)) {
+    ob.mesh.visible = m.show.includes(id);
+    if (ob.o.kind === 'lines' || !ob.mesh.visible) continue;
+    const key = ob.isWall ? m.wall : m.field, r = key && key !== 'none' ? rangeFor(m, key, ob.isWall) : null;
+    setScalar(ob, key, r); if (r && !leg) leg = [key, r];
+    if (ob.isWall) ob.mesh.material.uniforms.uHalf.value = m.half ? 1 : 0;
+  }
+  const box = document.getElementById('legends'); box.innerHTML = '';
+  if (leg) box.append(legend(leg[0], m.title, { [leg[0]]: leg[1] }));
+  if (m.view) setView(m.view);
+}
+
+function legend(key, title, grp) {
+  const [a, b] = grp[key], unit = LABEL[key][1];
+  const fmt = v => (Math.abs(b - a) < 0.1 ? v.toFixed(3) : Math.abs(b - a) < 5 ? v.toFixed(2) : v.toFixed(0)).replace('.', ',');
+  const el = document.createElement('div'); el.className = 'legend';
+  el.innerHTML = `<div class="t">${title}${unit ? ' [' + unit + ']' : ''}</div><canvas width="256" height="1"></canvas>
+    <div class="ticks">${[0, .25, .5, .75, 1].map(f => `<span>${fmt(a + (b - a) * f)}</span>`).join('')}</div>`;
+  const ctx = el.querySelector('canvas').getContext('2d'), img = ctx.createImageData(256, 1);
+  img.data.set(lutData(SEQ)); ctx.putImageData(img, 0, 0);
+  return el;
+}
+const VIEWS = { iso: [-330, 190, 380], isoB: [-300, 170, -400], lateral: [40, 0, 760], planta: [40, 760, 1], frontal: [-760, 0, 0], cola: [820, 60, 0] };
+function setView(name, instant) {
+  const p = VIEWS[name]; camera.position.set(p[0], p[1], p[2]); controls.target.set(40, 0, 0); controls.update();
+  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === name));
+}
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
+document.querySelectorAll('[name=modo]').forEach(r => r.onchange = () => { if (r.checked) applyMode(r.value); });
+
+// sonda de valores
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(), tip = document.getElementById('tip');
+const tri = new THREE.Triangle(), bc = new THREE.Vector3(), va = new THREE.Vector3(), vb = new THREE.Vector3(), vc = new THREE.Vector3();
+function probe(ev) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ptr.set((ev.clientX - r.left) / r.width * 2 - 1, -(ev.clientY - r.top) / r.height * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const targets = Object.values(objs).filter(o => o.o.kind !== 'lines' && o.mesh.visible && o.key).map(o => o.mesh);
+  const hit = ray.intersectObjects(targets, false)[0];
+  if (!hit) { tip.style.display = 'none'; return; }
+  const ob = Object.values(objs).find(o => o.mesh === hit.object), P = ob.A.position, S = ob.A[ob.key], f = hit.face;
+  va.fromArray(P, f.a * 3); vb.fromArray(P, f.b * 3); vc.fromArray(P, f.c * 3);
+  tri.set(va, vb, vc).getBarycoord(hit.point, bc);
+  const v = S[f.a] * bc.x + S[f.b] * bc.y + S[f.c] * bc.z, unit = LABEL[ob.key][1];
+  const val = (ob.key === 'cf' ? v.toFixed(4) : ob.key === 'p' || ob.key === 'vel' ? v.toFixed(1) : v.toFixed(3)).replace('.', ',');
+  tip.innerHTML = `${ob.o.label}<br><b>${LABEL[ob.key][0]} = ${val}${unit ? ' ' + unit : ''}</b><br>x = ${(hit.point.x - NOSE_X).toFixed(0)} mm desde la punta`;
+  tip.style.left = (ev.clientX - r.left) + 'px'; tip.style.top = (ev.clientY - r.top) + 'px'; tip.style.display = 'block';
+}
+renderer.domElement.addEventListener('pointermove', probe);
+renderer.domElement.addEventListener('pointerleave', () => tip.style.display = 'none');
+
+function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); lineMats.forEach(m => m.resolution.set(w, h)); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+addEventListener('error', e => { const l = document.getElementById('loading'); if (l) l.textContent = 'Error: ' + e.message; });
+load().catch(e => { document.getElementById('loading').textContent = 'No se pudieron cargar los datos (' + e.message + '). Abre la página desde un servidor web.'; });
+
+// gráfico de convergencia
+(async () => {
+  const box = document.getElementById('conv'), svg = box.querySelector('svg'), ctip = box.querySelector('.tip');
+  const d = (window.CFD_DATA ? window.CFD_DATA.conv : await (await fetch('data/convergencia.json')).json()).cd;
+  const W = 600, H = 260, L = 44, R = 12, T = 10, B = 28, y0 = 0.3, y1 = 0.95;
+  const X = i => L + (i - 1) / 999 * (W - L - R), Y = v => T + (1 - (Math.min(v, y1) - y0) / (y1 - y0)) * (H - T - B);
+  const ns = 'http://www.w3.org/2000/svg', css = getComputedStyle(document.documentElement);
+  const el = (n, a) => { const e = document.createElementNS(ns, n); for (const k in a) e.setAttribute(k, a[k]); svg.append(e); return e; };
+  for (const v of [0.3, 0.5, 0.7, 0.9]) { el('line', { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: 'var(--grid)', 'stroke-width': 1 });
+    el('text', { x: L - 6, y: Y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--muted)' }).textContent = v.toFixed(1).replace('.', ','); }
+  for (const i of [1, 250, 500, 750, 1000]) el('text', { x: X(i), y: H - 8, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }).textContent = i;
+  el('path', { d: d.map((p, k) => (k ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join(' '), fill: 'none', stroke: 'var(--s1)', 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke' });
+  el('text', { x: W - R, y: Y(0.336) - 8, 'text-anchor': 'end', 'font-size': 12, fill: 'var(--ink)' }).textContent = 'Cd = 0,336';
+  const cross = el('line', { y1: T, y2: H - B, stroke: 'var(--muted)', 'stroke-width': 1, 'stroke-dasharray': '3 3', visibility: 'hidden' });
+  const dot = el('circle', { r: 4, fill: 'var(--s1)', stroke: 'var(--surface)', 'stroke-width': 2, visibility: 'hidden' });
+  svg.addEventListener('pointermove', ev => {
+    const r = svg.getBoundingClientRect(), it = 1 + ((ev.clientX - r.left) / r.width * W - L) / (W - L - R) * 999;
+    const p = d.reduce((a, b) => Math.abs(b[0] - it) < Math.abs(a[0] - it) ? b : a);
+    cross.setAttribute('x1', X(p[0])); cross.setAttribute('x2', X(p[0])); dot.setAttribute('cx', X(p[0])); dot.setAttribute('cy', Y(p[1]));
+    cross.setAttribute('visibility', 'visible'); dot.setAttribute('visibility', 'visible');
+    ctip.innerHTML = `iteración ${p[0]}<br><b>Cd = ${p[1].toFixed(4).replace('.', ',')}</b>`;
+    ctip.style.left = (ev.clientX - box.getBoundingClientRect().left) + 'px'; ctip.style.top = (ev.clientY - box.getBoundingClientRect().top) + 'px'; ctip.style.display = 'block';
+  });
+  svg.addEventListener('pointerleave', () => { ctip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); });
+})();
+</script>
+</body>
+</html>

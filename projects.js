@@ -8,7 +8,7 @@ const PROJECTS = [
     title: "BGM-109 Tomahawk",
     subtitle: "Análisis del misil de crucero: propulsión, aerodinámica y diseño CAD",
     description: "Proyecto integral de ingeniería inversa del misil de crucero Tomahawk: análisis termodinámico del turbofán Williams F107-WR-402, simulación CFD y diseño CAD.",
-    tags: ["GasTurb", "CFD", "Propulsión", "MATLAB"],
+    tags: ["GasTurb", "ANSYS Fluent", "SolidWorks", "CFD", "Propulsión"],
     image: "img/misil_hero.png",
     status: "En progreso",
     date: "2026",
@@ -17,14 +17,14 @@ const PROJECTS = [
         id: "diseno",
         title: "Diseño CAD",
         icon: "",
-        software: ["SolidWorks 2024", "KeyShot"],
-        summary: "Diseño 3D completo del misil: fuselaje, aletas, ojiva y compartimentos internos.",
+        software: ["SolidWorks 2026", "Python (API de SolidWorks)"],
+        summary: "Modelo sólido del BGM-109 a escala ≈ 1:20 (280,8 mm): ojiva tangente, fuselaje cilíndrico, cola troncocónica, alas rectas y tres aletas de cola a 120°.",
         steps: [
-          { title: "Investigación y referencias", description: "Estudio de geometrías de misiles existentes (AIM-9, AIM-120). Definición de requisitos: longitud ~3 m, diámetro ~150 mm.", image: "img/misil_ref.png" },
-          { title: "Diseño de la ojiva", description: "Ojiva tangente-ogival con relación L/D de 3:1 optimizada para baja resistencia aerodinámica supersónica. Perfil basado en Haack series.", image: "img/misil_ojiva.png" },
-          { title: "Fuselaje y compartimentos", description: "Cuerpo cilíndrico en Al 7075-T6 (espesor 2 mm). Compartimentos: guiado, carga útil y motor con uniones roscadas.", image: "img/misil_fuselaje.png" },
-          { title: "Aletas estabilizadoras", description: "4 aletas cruciformes con perfil doble cuña, ángulo de flecha 45°. Verificación de estabilidad estática (CP detrás de CG).", image: "img/misil_aletas.png" },
-          { title: "Ensamblaje y renderizado", description: "Integración paramétrica de componentes. Verificación de interferencias. Render fotorrealista en KeyShot.", image: "img/misil_render.png" }
+          { title: "Modelo 3D interactivo", description: "Gira, acerca y explora el modelo directamente en el navegador.", contentHTML: `<div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);margin-top:0.6rem"><iframe src="tomahawk/visor-cad.html" title="Visor 3D" loading="lazy" style="display:block;width:100%;height:460px;border:0" allowfullscreen></iframe></div><p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/" target="_blank" rel="noopener" style="color:#e8a24c;font-weight:600;text-decoration:none">Abrir la ficha completa del modelo CAD &rarr;</a></p>` },
+          { title: "Medidas principales", description: "Medidas extraídas de la geometría exacta (B-rep) del modelo con la API de SolidWorks, en mm.", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Componente</th><th>Medida</th></tr></thead><tbody><tr><td>Longitud total</td><td>280,80</td></tr><tr><td>Diámetro del fuselaje</td><td>Ø 26,00</td></tr><tr><td>Ojiva tangente</td><td>L 28,00 · ρ 36,65</td></tr><tr><td>Cola troncocónica</td><td>L 26,00 · Ø 26,00 → 17,31</td></tr><tr><td>Alas rectas</td><td>envergadura 133,00 · cuerda 19,19 · espesor 1,53 (≈ 8 %)</td></tr><tr><td>Aletas (×3 a 120°)</td><td>radio de punta 33,50 · cuerda 15,4–15,8 · flecha 8°</td></tr><tr><td>Esbeltez L/D</td><td>10,8</td></tr><tr><td>Volumen / superficie</td><td>141,6 cm³ / 286,0 cm²</td></tr></tbody></table>` },
+          { title: "Planos acotados", description: "Planos dibujados a partir de las medidas exactas del sólido.", images: ["tomahawk/img/plano_alzado.png", "tomahawk/img/plano_planta.png", "tomahawk/img/plano_posterior.png"] },
+          { title: "Perfiles del ala y de la aleta", description: "Secciones del ala (cuerda 19,19 mm, espesor 8 %, curvatura ≈ 1 %) y de la aleta (cuerda 15,75 mm, espesor 9 %).", images: ["tomahawk/img/perfiles.png"] },
+          { title: "Preparación para CFD", description: "Los bordes de salida en filo de alas y aletas impedían generar una malla válida. Se truncaron a 0,25 mm de espesor con operaciones automatizadas desde Python sobre la API de SolidWorks, manteniendo la longitud y el volumen del modelo. Su efecto estimado en la resistencia es de ≈ +2 %.", image: null }
         ]
       },
       {
@@ -310,14 +310,16 @@ La <strong>zona verde sombreada</strong> marca la ventana de crucero operativo d
         id: "aerodinamica",
         title: "Análisis Aerodinámico",
         icon: "",
-        software: ["ANSYS Fluent 2024", "MATLAB", "Pointwise"],
-        summary: "CFD del flujo externo a diferentes Mach. Coeficientes CD, CL, CM y visualización del campo de flujo.",
+        software: ["ANSYS Discovery", "ANSYS Meshing", "ANSYS Fluent 2026 R1", "CFD-Post", "PyVista · three.js"],
+        summary: "Flujo externo compresible a Mach 0,72 a nivel del mar (crucero nominal del F107): coeficientes aerodinámicos, campo de flujo y visor 3D interactivo de los resultados.",
         steps: [
-          { title: "Preparación de geometría", description: "Simplificación CAD para CFD. Dominio: cono de 20×10 diámetros. Exportación STEP.", image: "img/aero_geometria.png" },
-          { title: "Generación de malla", description: "Malla estructurada en Pointwise, y+≈1, ~4.2M celdas. Estudio de independencia de malla (3 niveles).", image: "img/aero_malla.png" },
-          { title: "Configuración del solver", description: "Solver density-based, modelo SST k-ω. Simulaciones a Mach 0.8, 1.2, 2.0 y 3.0.", image: "img/aero_solver.png" },
-          { title: "Campo de flujo", description: "Contornos de presión, temperatura y Mach. Ondas de choque oblicuas y expansión visibles en régimen supersónico.", image: "img/aero_contornos.png" },
-          { title: "Coeficientes aerodinámicos", description: "CD, CL, CM vs. α (0°-15°). CD=0.42 a Mach 2.0 α=0°. Concordancia del 8% con método de Barrowman.", image: "img/aero_coeficientes.png" }
+          { title: "Resultados en 3D", description: "Visor interactivo de la solución: número de Mach y presión alrededor del misil, presión y fricción sobre su superficie, y líneas de corriente. Pasa el cursor para leer los valores.", contentHTML: `<div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);margin-top:0.6rem"><iframe src="tomahawk/cfd/?embed=1" title="Visor 3D" loading="lazy" style="display:block;width:100%;height:560px;border:0" allowfullscreen></iframe></div><p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/cfd/" target="_blank" rel="noopener" style="color:#e8a24c;font-weight:600;text-decoration:none">Abrir el análisis CFD completo &rarr;</a></p>` },
+          { title: "Dominio y malla", description: "Volumen de control en ANSYS Discovery (1,0 m delante, 2,5 m detrás y 0,85 m a los lados) y malla no estructurada en ANSYS Meshing, dentro del límite de un millón de celdas de la licencia Student. La primera capa se dimensionó para y⁺ ≈ 30.", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Parámetro</th><th>Valor</th></tr></thead><tbody><tr><td>Celdas</td><td>471 730</td></tr><tr><td>Tipo</td><td>tetraedros + 5 capas de prismas</td></tr><tr><td>Tamaño en el misil</td><td>3 mm</td></tr><tr><td>Primera capa</td><td>0,12 mm</td></tr><tr><td>y⁺ medio / máximo</td><td>30,9 / 75,4</td></tr><tr><td>Calidad ortogonal mínima</td><td>0,024</td></tr></tbody></table>` },
+          { title: "Configuración del solver", description: "ANSYS Fluent, solver basado en presión acoplado y estacionario, discretización de segundo orden.", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Apartado</th><th>Ajuste</th></tr></thead><tbody><tr><td>Aire</td><td>gas ideal + viscosidad de Sutherland</td></tr><tr><td>Turbulencia</td><td>k-ω SST</td></tr><tr><td>Contorno exterior</td><td>pressure far-field: Mach 0,72 · 101 325 Pa · 288,15 K</td></tr><tr><td>Velocidad</td><td>244,9 m/s</td></tr><tr><td>Ángulo de ataque</td><td>0°</td></tr><tr><td>Referencias</td><td>A = 531 mm² (sección frontal) · D = 26 mm</td></tr></tbody></table>` },
+          { title: "Convergencia y validación", description: "1000 iteraciones; el Cd se estabiliza con una oscilación inferior al 0,01 %. La presión en la punta de la ojiva (142,8 kPa) reproduce la presión de remanso isentrópica (143,1 kPa) con un −0,2 % de diferencia, y coincide con la presión de entrada P1 del motor a Mach 0,72 (143,2 kPa).", images: ["tomahawk/cfd/img/convergencia_cd.png"] },
+          { title: "Coeficientes aerodinámicos", description: "Coeficientes referidos a la sección frontal del fuselaje. Casi la mitad de la resistencia es fricción, por la gran superficie mojada de un misil tan esbelto (L/D ≈ 11).", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Coeficiente</th><th>Presión</th><th>Fricción</th><th>Total</th></tr></thead><tbody><tr><td>Cd</td><td>0,175</td><td>0,161</td><td><strong>0,336</strong></td></tr><tr><td>Cl</td><td>0,216</td><td>0,000</td><td><strong>0,216</strong></td></tr><tr><td>Cz (lateral)</td><td>−0,003</td><td>0,000</td><td>−0,003</td></tr></tbody></table><table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Magnitud</th><th>Valor</th></tr></thead><tbody><tr><td>Cm (respecto al CdG)</td><td>0,228</td></tr><tr><td>Resistencia del modelo</td><td>6,55 N</td></tr><tr><td>Mach local máximo</td><td>0,91</td></tr></tbody></table>` },
+          { title: "Campo de flujo", description: "Líneas de flujo sobre la superficie (esfuerzo cortante) y coeficiente de presión, renderizados en CFD-Post. El flujo sale en estrella del punto de remanso de la ojiva, alcanza su fricción máxima en el hombro y se desvía alrededor de la raíz del ala.", images: ["tomahawk/cfd/img/cfdpost_flujo_3q.png", "tomahawk/cfd/img/cfdpost_cp.png", "tomahawk/cfd/img/cfdpost_flujo_lateral.png"] },
+          { title: "Informe técnico", description: "Proceso completo paso a paso, desde la preparación de la geometría hasta la validación de resultados.", contentHTML: `<p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/docs/Informe_CFD_Tomahawk.pdf" target="_blank" rel="noopener" style="color:#e8a24c;font-weight:600;text-decoration:none">Descargar el informe CFD (PDF) &rarr;</a></p>` }
         ]
       },
       {
@@ -327,9 +329,9 @@ La <strong>zona verde sombreada</strong> marca la ventana de crucero operativo d
         software: [],
         summary: "Resumen de resultados, lecciones aprendidas y trabajo futuro.",
         steps: [
-          { title: "Resultados principales", description: "Misil de 2.95 m, 85 kg, empuje 2500 N, Mach máx 2.8, alcance ~15 km. Estabilidad verificada (margen >1.5 calibres).", image: null },
+          { title: "Resultados principales", description: "<strong>Motor F107:</strong> 2,90 kN de empuje neto en el punto de diseño y 2,59 kN en crucero nominal (Mach 0,72), con un consumo específico de 26,3 g/(kN·s). <strong>Aerodinámica (CFD, Mach 0,72, α = 0°):</strong> Cd = 0,336, repartido entre presión (52 %) y fricción (48 %). Extrapolada a escala real (Ø 0,52 m), la resistencia es de 2,2–2,6 kN (con y sin corrección de Reynolds), del mismo orden que el empuje en crucero: el motor está dimensionado para sostener el crucero a Mach ≈ 0,7, coherente con el Tomahawk real.", image: null },
           { title: "Lecciones aprendidas", description: "La integración multidisciplinar reveló acoplimientos importantes entre geometría, propulsión y aerodinámica. Experiencia adquirida en SolidWorks, ANSYS Fluent y CEA.", image: null },
-          { title: "Trabajo futuro", description: "Extensiones: análisis FEA estructural, trayectoria 6-DOF en Simulink, optimización MDO, y estudio de firma radar (RCS).", image: null }
+          { title: "Trabajo futuro", description: "Barrido de ángulo de ataque (pendiente de sustentación, estabilidad estática y ángulo de crucero), barrido de Mach frente a la curva de empuje del F107, estimación del alcance combinando la polar aerodinámica con el TSFC, estudio de independencia de malla y análisis estructural de las alas con las cargas del CFD.", image: null }
         ]
       }
     ]

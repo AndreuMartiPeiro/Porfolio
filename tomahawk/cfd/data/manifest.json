@@ -1,0 +1,245 @@
+{
+ "case": "Tomahawk 1:20 · Mach 0,72 · nivel del mar (ISA) · k-ω SST · 471 730 celdas",
+ "units": "mm",
+ "objects": [
+  {
+   "id": "misil",
+   "label": "Misil",
+   "kind": "surface",
+   "file": "misil.bin",
+   "layout": {
+    "position": {
+     "offset": 0,
+     "count": 19275,
+     "dtype": "float32"
+    },
+    "index": {
+     "offset": 77100,
+     "count": 38538,
+     "dtype": "uint32"
+    },
+    "cp": {
+     "offset": 231252,
+     "count": 6425,
+     "dtype": "float32"
+    },
+    "p": {
+     "offset": 256952,
+     "count": 6425,
+     "dtype": "float32"
+    },
+    "cf": {
+     "offset": 282652,
+     "count": 6425,
+     "dtype": "float32"
+    }
+   },
+   "vars": [
+    "cp",
+    "p",
+    "cf"
+   ]
+  },
+  {
+   "id": "plano_vertical",
+   "label": "Corte vertical (eje)",
+   "kind": "surface",
+   "file": "plano_vertical.bin",
+   "layout": {
+    "position": {
+     "offset": 0,
+     "count": 30927,
+     "dtype": "float32"
+    },
+    "index": {
+     "offset": 123708,
+     "count": 59385,
+     "dtype": "uint32"
+    },
+    "mach": {
+     "offset": 361248,
+     "count": 10309,
+     "dtype": "float32"
+    },
+    "cp": {
+     "offset": 402484,
+     "count": 10309,
+     "dtype": "float32"
+    },
+    "p": {
+     "offset": 443720,
+     "count": 10309,
+     "dtype": "float32"
+    },
+    "vel": {
+     "offset": 484956,
+     "count": 10309,
+     "dtype": "float32"
+    }
+   },
+   "vars": [
+    "mach",
+    "cp",
+    "p",
+    "vel"
+   ]
+  },
+  {
+   "id": "plano_alas",
+   "label": "Corte horizontal (alas)",
+   "kind": "surface",
+   "file": "plano_alas.bin",
+   "layout": {
+    "position": {
+     "offset": 0,
+     "count": 50511,
+     "dtype": "float32"
+    },
+    "index": {
+     "offset": 202044,
+     "count": 97206,
+     "dtype": "uint32"
+    },
+    "mach": {
+     "offset": 590868,
+     "count": 16837,
+     "dtype": "float32"
+    },
+    "cp": {
+     "offset": 658216,
+     "count": 16837,
+     "dtype": "float32"
+    },
+    "p": {
+     "offset": 725564,
+     "count": 16837,
+     "dtype": "float32"
+    },
+    "vel": {
+     "offset": 792912,
+     "count": 16837,
+     "dtype": "float32"
+    }
+   },
+   "vars": [
+    "mach",
+    "cp",
+    "p",
+    "vel"
+   ]
+  },
+  {
+   "id": "estela",
+   "label": "Corte transversal de la estela (23 mm tras la base)",
+   "kind": "surface",
+   "file": "estela.bin",
+   "layout": {
+    "position": {
+     "offset": 0,
+     "count": 4059,
+     "dtype": "float32"
+    },
+    "index": {
+     "offset": 16236,
+     "count": 7671,
+     "dtype": "uint32"
+    },
+    "mach": {
+     "offset": 46920,
+     "count": 1353,
+     "dtype": "float32"
+    },
+    "cp": {
+     "offset": 52332,
+     "count": 1353,
+     "dtype": "float32"
+    },
+    "p": {
+     "offset": 57744,
+     "count": 1353,
+     "dtype": "float32"
+    },
+    "vel": {
+     "offset": 63156,
+     "count": 1353,
+     "dtype": "float32"
+    }
+   },
+   "vars": [
+    "mach",
+    "cp",
+    "p",
+    "vel"
+   ]
+  },
+  {
+   "id": "streamlines",
+   "label": "Líneas de corriente",
+   "kind": "lines",
+   "file": "streamlines.bin",
+   "layout": {
+    "position": {
+     "offset": 0,
+     "count": 202284,
+     "dtype": "float32"
+    },
+    "mach": {
+     "offset": 809136,
+     "count": 67428,
+     "dtype": "float32"
+    },
+    "offsets": {
+     "offset": 1078848,
+     "count": 198,
+     "dtype": "uint32"
+    }
+   },
+   "vars": [
+    "mach"
+   ]
+  }
+ ],
+ "ranges": {
+  "cp": {
+   "label": "Coeficiente de presión Cp",
+   "unit": "",
+   "min": -0.63287,
+   "max": 1.04827
+  },
+  "p": {
+   "label": "Presión estática",
+   "unit": "kPa",
+   "min": 83.74363,
+   "max": 130.34328
+  },
+  "mach": {
+   "label": "Número de Mach",
+   "unit": "",
+   "min": 0.0,
+   "max": 1.1,
+   "max_data": 0.9073749780654907
+  },
+  "vel": {
+   "label": "Velocidad",
+   "unit": "m/s",
+   "min": 0.0,
+   "max": 294.69809
+  },
+  "cf": {
+   "label": "Coef. de fricción Cf",
+   "unit": "",
+   "min": 0.00065,
+   "max": 0.01024
+  }
+ },
+ "results": {
+  "Cd": 0.33584,
+  "Cd_presion": 0.17513,
+  "Cd_friccion": 0.16071,
+  "Cl": 0.21591,
+  "Cm": 0.228,
+  "yplus_medio": 30.9,
+  "pmax_kPa": 142.78,
+  "pmin_kPa": 69.9
+ }
+}
