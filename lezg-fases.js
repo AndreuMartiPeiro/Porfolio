@@ -341,7 +341,7 @@
     const anterior = rwy.exits[rwy.exits.indexOf(usada) - 1];
     const aAnt = anterior ? aRequerida(anterior[1], r.vba, s12, 25) : null;
     document.getElementById('calc-conclusion').innerHTML = `
-      <span class="conclusion-icon">${forzada ? '⚠️' : '🛬'}</span>
+      <span class="conclusion-icon ${forzada ? '' : 'is-ok'}"></span>
       <div class="conclusion-text">
         ${forzada
           ? `Con ${fmt(calc.a, 2)} m/s² el avión no baja a 25 km/h antes del final de la pista: tendría que frenar más fuerte para salir por <strong>${usada[0]}</strong>, en el extremo.`
@@ -388,24 +388,24 @@
       ys.push(s <= s12 ? r.vba * 3.6 : Math.sqrt(Math.max(r.vba ** 2 - 2 * calc.a * (s - s12), 0)) * 3.6);
     }
     const shapes = [
-      ...rwy.exits.map(([n, s]) => ({ type: 'line', x0: s, x1: s, y0: 0, y1: 1, yref: 'paper', line: { color: n === usada[0] ? '#c75b39' : 'rgba(255,255,255,0.18)', width: n === usada[0] ? 2 : 1 } })),
+      ...rwy.exits.map(([n, s]) => ({ type: 'line', x0: s, x1: s, y0: 0, y1: 1, yref: 'paper', line: { color: n === usada[0] ? '#e8552b' : 'rgba(255,255,255,0.18)', width: n === usada[0] ? 2 : 1 } })),
       { type: 'rect', x0: rwy.lda, x1: 3400, y0: 0, y1: 1, yref: 'paper', fillcolor: 'rgba(255,255,255,0.05)', line: { width: 0 } },
       ...[95, 25].map(v => ({ type: 'line', x0: 0, x1: 3400, y0: v, y1: v, line: { color: 'rgba(255,255,255,0.3)', width: 1, dash: 'dot' } }))
     ];
     const annotations = [
-      ...rwy.exits.map(([n, s]) => ({ x: s, y: 1.04, yref: 'paper', text: n, showarrow: false, font: { color: n === usada[0] ? '#c75b39' : '#9a9590', size: 11 } })),
-      { x: 60, y: 95, text: '95 km/h', showarrow: false, xanchor: 'left', yanchor: 'bottom', font: { color: '#9a9590', size: 10 } },
-      { x: 60, y: 25, text: '25 km/h', showarrow: false, xanchor: 'left', yanchor: 'bottom', font: { color: '#9a9590', size: 10 } },
-      { x: 3215, y: 0.5, yref: 'paper', text: 'fuera de<br>pista', showarrow: false, font: { color: '#6b6560', size: 10 } }
+      ...rwy.exits.map(([n, s]) => ({ x: s, y: 1.04, yref: 'paper', text: n, showarrow: false, font: { color: n === usada[0] ? '#e8552b' : '#8e8e93', size: 11 } })),
+      { x: 60, y: 95, text: '95 km/h', showarrow: false, xanchor: 'left', yanchor: 'bottom', font: { color: '#8e8e93', size: 10 } },
+      { x: 60, y: 25, text: '25 km/h', showarrow: false, xanchor: 'left', yanchor: 'bottom', font: { color: '#8e8e93', size: 10 } },
+      { x: 3215, y: 0.5, yref: 'paper', text: 'fuera de<br>pista', showarrow: false, font: { color: '#6e6e73', size: 10 } }
     ];
     const layout = {
       paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
       margin: { l: 50, r: 15, t: 25, b: 45 }, height: 300, showlegend: false,
-      xaxis: { title: { text: `Distancia desde el umbral ${calc.thr} (m)`, font: { color: '#9a9590', size: 12 } }, range: [0, 3400], color: '#9a9590', gridcolor: 'rgba(255,255,255,0.06)', zeroline: false },
-      yaxis: { title: { text: 'Velocidad (km/h)', font: { color: '#9a9590', size: 12 } }, range: [0, 320], color: '#9a9590', gridcolor: 'rgba(255,255,255,0.06)', zeroline: false },
+      xaxis: { title: { text: `Distancia desde el umbral ${calc.thr} (m)`, font: { color: '#8e8e93', size: 12 } }, range: [0, 3400], color: '#8e8e93', gridcolor: 'rgba(255,255,255,0.06)', zeroline: false },
+      yaxis: { title: { text: 'Velocidad (km/h)', font: { color: '#8e8e93', size: 12 } }, range: [0, 320], color: '#8e8e93', gridcolor: 'rgba(255,255,255,0.06)', zeroline: false },
       shapes, annotations
     };
-    const data = [{ x: xs, y: ys, type: 'scatter', mode: 'lines', line: { color: '#c75b39', width: 3 }, hovertemplate: '%{x:.0f} m · %{y:.0f} km/h<extra></extra>' }];
+    const data = [{ x: xs, y: ys, type: 'scatter', mode: 'lines', line: { color: '#e8552b', width: 3 }, hovertemplate: '%{x:.0f} m · %{y:.0f} km/h<extra></extra>' }];
     Plotly.react(el, data, layout, { responsive: true, displayModeBar: false });
   }
 

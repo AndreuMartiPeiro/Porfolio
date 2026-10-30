@@ -20,7 +20,7 @@ const PROJECTS = [
         software: ["SolidWorks 2026", "Python (API de SolidWorks)"],
         summary: "Modelo sólido del BGM-109 a escala ≈ 1:20 (280,8 mm): ojiva tangente, fuselaje cilíndrico, cola troncocónica, alas rectas y tres aletas de cola a 120°.",
         steps: [
-          { title: "Modelo 3D interactivo", description: "Gira, acerca y explora el modelo directamente en el navegador.", contentHTML: `<div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);margin-top:0.6rem"><iframe src="tomahawk/visor-cad.html" title="Visor 3D" loading="lazy" style="display:block;width:100%;height:460px;border:0" allowfullscreen></iframe></div><p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/" target="_blank" rel="noopener" style="color:#e8a24c;font-weight:600;text-decoration:none">Abrir la ficha completa del modelo CAD &rarr;</a></p>` },
+          { title: "Modelo 3D interactivo", description: "Gira, acerca y explora el modelo directamente en el navegador.", contentHTML: `<div style="position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin-top:0.6rem"><iframe src="tomahawk/visor-cad.html" title="Visor 3D" loading="lazy" style="display:block;width:100%;height:460px;border:0" allowfullscreen></iframe></div><p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Abrir la ficha completa del modelo CAD &rarr;</a></p>` },
           { title: "Medidas principales", description: "Medidas extraídas de la geometría exacta (B-rep) del modelo con la API de SolidWorks, en mm.", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Componente</th><th>Medida</th></tr></thead><tbody><tr><td>Longitud total</td><td>280,80</td></tr><tr><td>Diámetro del fuselaje</td><td>Ø 26,00</td></tr><tr><td>Ojiva tangente</td><td>L 28,00 · ρ 36,65</td></tr><tr><td>Cola troncocónica</td><td>L 26,00 · Ø 26,00 → 17,31</td></tr><tr><td>Alas rectas</td><td>envergadura 133,00 · cuerda 19,19 · espesor 1,53 (≈ 8 %)</td></tr><tr><td>Aletas (×3 a 120°)</td><td>radio de punta 33,50 · cuerda 15,4–15,8 · flecha 8°</td></tr><tr><td>Esbeltez L/D</td><td>10,8</td></tr><tr><td>Volumen / superficie</td><td>141,6 cm³ / 286,0 cm²</td></tr></tbody></table>` },
           { title: "Planos acotados", description: "Planos dibujados a partir de las medidas exactas del sólido.", images: ["tomahawk/img/plano_alzado.png", "tomahawk/img/plano_planta.png", "tomahawk/img/plano_posterior.png"] },
           { title: "Perfiles del ala y de la aleta", description: "Secciones del ala (cuerda 19,19 mm, espesor 8 %, curvatura ≈ 1 %) y de la aleta (cuerda 15,75 mm, espesor 9 %).", images: ["tomahawk/img/perfiles.png"] },
@@ -210,7 +210,7 @@ const PROJECTS = [
             isExpandedByDefault: true,
             contentHTML: `<h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Metodología: Puntos de Estudio</h4>
 <p class="timeline-card-desc" style="margin-bottom: 1rem;">Para simular distintas velocidades de vuelo en GasTurb (modo T1/P1/Pamb), se calcularon las condiciones de entrada al motor usando las <strong>relaciones isentrópicas de flujo compresible</strong> y la <strong>atmósfera estándar ISA a nivel del mar</strong> (T<sub>s</sub> = 288.15 K, P<sub>s</sub> = 101.325 kPa):</p>
-<div style="background: rgba(199,91,57,0.06); border: 1px solid rgba(199,91,57,0.15); border-radius: 8px; padding: 0.8rem 1.2rem; margin-bottom: 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.8;">
+<div style="background: rgba(232,85,43,0.06); border: 1px solid rgba(232,85,43,0.15); border-radius: 8px; padding: 0.8rem 1.2rem; margin-bottom: 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.8;">
   T₁ = T<sub>s</sub> × (1 + 0.2 × M²)<br>
   P₁ = P<sub>s</sub> × (1 + 0.2 × M²)<sup>3.5</sup>
 </div>
@@ -219,7 +219,7 @@ const PROJECTS = [
     <thead><tr><th>Punto</th><th>Fase de Vuelo</th><th>Mach</th><th>T1 [K]</th><th>P1 [kPa]</th><th>Pamb [kPa]</th></tr></thead>
     <tbody>
       <tr><td>1</td><td>Post-booster (arranque F107)</td><td>0.30</td><td>293.0</td><td>107.8</td><td>101.3</td></tr>
-      <tr style="background: rgba(199,91,57,0.08);"><td>2</td><td>Punto de Diseño</td><td>0.46</td><td>291.5</td><td>116.5</td><td>101.0</td></tr>
+      <tr style="background: rgba(232,85,43,0.08);"><td>2</td><td>Punto de Diseño</td><td>0.46</td><td>291.5</td><td>116.5</td><td>101.0</td></tr>
       <tr><td>3</td><td>Aceleración intermedia</td><td>0.50</td><td>303.0</td><td>120.0</td><td>101.3</td></tr>
       <tr><td>4</td><td>Transición a crucero</td><td>0.60</td><td>309.0</td><td>129.0</td><td>101.3</td></tr>
       <tr><td>5</td><td>Crucero económico</td><td>0.65</td><td>312.5</td><td>134.6</td><td>101.3</td></tr>
@@ -236,7 +236,7 @@ const PROJECTS = [
     <thead><tr><th>Mach</th><th>Net Thrust [kN]</th><th>Gross Thrust [kN]</th><th>TSFC [g/(kN·s)]</th><th>Fuel Flow [kg/s]</th><th>OPR</th><th>ΔT Combustor [K]</th></tr></thead>
     <tbody>
       <tr><td>0.30</td><td>2.858</td><td>3.693</td><td>21.23</td><td>0.0607</td><td>14.10</td><td>541</td></tr>
-      <tr style="background: rgba(199,91,57,0.08);"><td><strong>0.46</strong></td><td><strong>2.885</strong></td><td><strong>4.247</strong></td><td><strong>22.91</strong></td><td><strong>0.0661</strong></td><td><strong>14.20</strong></td><td><strong>542</strong></td></tr>
+      <tr style="background: rgba(232,85,43,0.08);"><td><strong>0.46</strong></td><td><strong>2.885</strong></td><td><strong>4.247</strong></td><td><strong>22.91</strong></td><td><strong>0.0661</strong></td><td><strong>14.20</strong></td><td><strong>542</strong></td></tr>
       <tr><td>0.50</td><td>2.684</td><td>4.178</td><td>23.64</td><td>0.0635</td><td>13.43</td><td>534</td></tr>
       <tr><td>0.60</td><td>2.644</td><td>4.528</td><td>24.78</td><td>0.0655</td><td>13.02</td><td>~527</td></tr>
       <tr><td>0.65</td><td>2.625</td><td>4.731</td><td>25.40</td><td>0.0667</td><td>12.76</td><td>~521</td></tr>
@@ -248,9 +248,9 @@ const PROJECTS = [
 </div>
 <h4 style="margin-bottom: 0.5rem; margin-top: 1.5rem; color: var(--text-primary);">Gráfico Interactivo: Rendimiento vs Mach</h4>
 <p class="timeline-card-desc" style="margin-bottom: 1rem;">El gráfico muestra tres magnitudes clave en función de la velocidad de vuelo:<br>
-• <strong style="color: #c75b39;">Net Thrust (empuje neto)</strong> — La fuerza útil que realmente propulsa el misil. Equivale al empuje bruto menos la resistencia ram (coste de capturar el aire). Es la métrica que define si el misil puede mantener o acelerar su velocidad.<br>
-• <strong style="color: rgba(199,91,57,0.6);">Gross Thrust (empuje bruto)</strong> — La fuerza total generada por los gases que salen de la tobera, sin descontar el coste de la entrada de aire. Crece con el Mach gracias al efecto ram (más aire comprimido entra al motor).<br>
-• <strong style="color: #4fc3f7;">TSFC (consumo específico)</strong> — Gramos de combustible consumidos por cada kN de empuje por segundo. Más alto = peor eficiencia. Determina el alcance máximo del misil.<br><br>
+• <strong style="color: var(--accent);">Net Thrust (empuje neto)</strong> — La fuerza útil que realmente propulsa el misil. Equivale al empuje bruto menos la resistencia ram (coste de capturar el aire). Es la métrica que define si el misil puede mantener o acelerar su velocidad.<br>
+• <strong style="color: rgba(232,85,43,0.6);">Gross Thrust (empuje bruto)</strong> — La fuerza total generada por los gases que salen de la tobera, sin descontar el coste de la entrada de aire. Crece con el Mach gracias al efecto ram (más aire comprimido entra al motor).<br>
+• <strong style="color: var(--tertiary);">TSFC (consumo específico)</strong> — Gramos de combustible consumidos por cada kN de empuje por segundo. Más alto = peor eficiencia. Determina el alcance máximo del misil.<br><br>
 La <strong>zona verde sombreada</strong> marca la ventana de crucero operativo del Tomahawk (Mach 0.65–0.72), donde se equilibra empuje suficiente con consumo aceptable.</p>
 <div class="chart-container" id="chart-offdesign-profile" data-chart-type="offdesign" data-chart-config="flightprofile"></div>
 <h4 style="margin-bottom: 0.5rem; margin-top: 1.5rem; color: var(--text-primary);">Análisis de las Tendencias</h4>
@@ -266,17 +266,17 @@ La <strong>zona verde sombreada</strong> marca la ventana de crucero operativo d
 <p class="timeline-card-desc">El análisis completo en GasTurb (Design Point + Estudio Paramétrico + Off-Design) permite extraer las siguientes conclusiones sobre la ingeniería del turbofán Williams F107-WR-402 que propulsa el misil de crucero Tomahawk BGM-109:</p>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-  <div style="background: rgba(199,91,57,0.04); border: 1px solid rgba(199,91,57,0.15); border-radius: 8px; padding: 1.2rem;">
+  <div style="background: rgba(232,85,43,0.04); border: 1px solid rgba(232,85,43,0.15); border-radius: 8px; padding: 1.2rem;">
     <div style="font-size: 0.7rem; color: var(--accent-cyan); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.3rem;">Punto de Diseño</div>
     <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-display);">2.90 kN</div>
     <div style="font-size: 0.8rem; color: var(--text-muted);">Empuje neto a Mach 0.72 en crucero</div>
   </div>
-  <div style="background: rgba(199,91,57,0.04); border: 1px solid rgba(199,91,57,0.15); border-radius: 8px; padding: 1.2rem;">
+  <div style="background: rgba(232,85,43,0.04); border: 1px solid rgba(232,85,43,0.15); border-radius: 8px; padding: 1.2rem;">
     <div style="font-size: 0.7rem; color: var(--accent-cyan); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.3rem;">Consumo</div>
     <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-display);">22.83 <span style="font-size: 0.9rem; font-weight: 400;">g/(kN·s)</span></div>
     <div style="font-size: 0.8rem; color: var(--text-muted);">TSFC en punto de diseño (BPR = 1.0)</div>
   </div>
-  <div style="background: rgba(199,91,57,0.04); border: 1px solid rgba(199,91,57,0.15); border-radius: 8px; padding: 1.2rem;">
+  <div style="background: rgba(232,85,43,0.04); border: 1px solid rgba(232,85,43,0.15); border-radius: 8px; padding: 1.2rem;">
     <div style="font-size: 0.7rem; color: var(--accent-cyan); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.3rem;">Off-Design</div>
     <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-display);">8 <span style="font-size: 0.9rem; font-weight: 400;">puntos</span></div>
     <div style="font-size: 0.8rem; color: var(--text-muted);">Mach 0.30 – 0.85 validados sin convergencia</div>
@@ -313,13 +313,13 @@ La <strong>zona verde sombreada</strong> marca la ventana de crucero operativo d
         software: ["ANSYS Discovery", "ANSYS Meshing", "ANSYS Fluent 2026 R1", "CFD-Post", "PyVista · three.js"],
         summary: "Flujo externo compresible a Mach 0,72 a nivel del mar (crucero nominal del F107): coeficientes aerodinámicos, campo de flujo y visor 3D interactivo de los resultados.",
         steps: [
-          { title: "Resultados en 3D", description: "Visor interactivo de la solución: número de Mach y presión alrededor del misil, presión y fricción sobre su superficie, y líneas de corriente. Pasa el cursor para leer los valores.", contentHTML: `<div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);margin-top:0.6rem"><iframe src="tomahawk/cfd/?embed=1" title="Visor 3D" loading="lazy" style="display:block;width:100%;height:560px;border:0" allowfullscreen></iframe></div><p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/cfd/" target="_blank" rel="noopener" style="color:#e8a24c;font-weight:600;text-decoration:none">Abrir el análisis CFD completo &rarr;</a></p>` },
+          { title: "Resultados en 3D", description: "Visor interactivo de la solución: número de Mach y presión alrededor del misil, presión y fricción sobre su superficie, y líneas de corriente. Pasa el cursor para leer los valores.", contentHTML: `<div style="position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin-top:0.6rem"><iframe src="tomahawk/cfd/?embed=1" title="Visor 3D" loading="lazy" style="display:block;width:100%;height:560px;border:0" allowfullscreen></iframe></div><p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/cfd/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Abrir el análisis CFD completo &rarr;</a></p>` },
           { title: "Dominio y malla", description: "Volumen de control en ANSYS Discovery (1,0 m delante, 2,5 m detrás y 0,85 m a los lados) y malla no estructurada en ANSYS Meshing, dentro del límite de un millón de celdas de la licencia Student. La primera capa se dimensionó para y⁺ ≈ 30.", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Parámetro</th><th>Valor</th></tr></thead><tbody><tr><td>Celdas</td><td>471 730</td></tr><tr><td>Tipo</td><td>tetraedros + 5 capas de prismas</td></tr><tr><td>Tamaño en el misil</td><td>3 mm</td></tr><tr><td>Primera capa</td><td>0,12 mm</td></tr><tr><td>y⁺ medio / máximo</td><td>30,9 / 75,4</td></tr><tr><td>Calidad ortogonal mínima</td><td>0,024</td></tr></tbody></table>` },
           { title: "Configuración del solver", description: "ANSYS Fluent, solver basado en presión acoplado y estacionario, discretización de segundo orden.", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Apartado</th><th>Ajuste</th></tr></thead><tbody><tr><td>Aire</td><td>gas ideal + viscosidad de Sutherland</td></tr><tr><td>Turbulencia</td><td>k-ω SST</td></tr><tr><td>Contorno exterior</td><td>pressure far-field: Mach 0,72 · 101 325 Pa · 288,15 K</td></tr><tr><td>Velocidad</td><td>244,9 m/s</td></tr><tr><td>Ángulo de ataque</td><td>0°</td></tr><tr><td>Referencias</td><td>A = 531 mm² (sección frontal) · D = 26 mm</td></tr></tbody></table>` },
           { title: "Convergencia y validación", description: "1000 iteraciones; el Cd se estabiliza con una oscilación inferior al 0,01 %. La presión en la punta de la ojiva (142,8 kPa) reproduce la presión de remanso isentrópica (143,1 kPa) con un −0,2 % de diferencia, y coincide con la presión de entrada P1 del motor a Mach 0,72 (143,2 kPa).", images: ["tomahawk/cfd/img/convergencia_cd.png"] },
           { title: "Coeficientes aerodinámicos", description: "Coeficientes referidos a la sección frontal del fuselaje. Casi la mitad de la resistencia es fricción, por la gran superficie mojada de un misil tan esbelto (L/D ≈ 11).", contentHTML: `<table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Coeficiente</th><th>Presión</th><th>Fricción</th><th>Total</th></tr></thead><tbody><tr><td>Cd</td><td>0,175</td><td>0,161</td><td><strong>0,336</strong></td></tr><tr><td>Cl</td><td>0,216</td><td>0,000</td><td><strong>0,216</strong></td></tr><tr><td>Cz (lateral)</td><td>−0,003</td><td>0,000</td><td>−0,003</td></tr></tbody></table><table class="data-table" style="width:100%;margin-top:0.6rem"><thead><tr><th>Magnitud</th><th>Valor</th></tr></thead><tbody><tr><td>Cm (respecto al CdG)</td><td>0,228</td></tr><tr><td>Resistencia del modelo</td><td>6,55 N</td></tr><tr><td>Mach local máximo</td><td>0,91</td></tr></tbody></table>` },
           { title: "Campo de flujo", description: "Líneas de flujo sobre la superficie (esfuerzo cortante) y coeficiente de presión, renderizados en CFD-Post. El flujo sale en estrella del punto de remanso de la ojiva, alcanza su fricción máxima en el hombro y se desvía alrededor de la raíz del ala.", images: ["tomahawk/cfd/img/cfdpost_flujo_3q.png", "tomahawk/cfd/img/cfdpost_cp.png", "tomahawk/cfd/img/cfdpost_flujo_lateral.png"] },
-          { title: "Informe técnico", description: "Proceso completo paso a paso, desde la preparación de la geometría hasta la validación de resultados.", contentHTML: `<p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/docs/Informe_CFD_Tomahawk.pdf" target="_blank" rel="noopener" style="color:#e8a24c;font-weight:600;text-decoration:none">Descargar el informe CFD (PDF) &rarr;</a></p>` }
+          { title: "Informe técnico", description: "Proceso completo paso a paso, desde la preparación de la geometría hasta la validación de resultados.", contentHTML: `<p class="timeline-card-desc" style="margin-top:0.6rem"><a href="tomahawk/docs/Informe_CFD_Tomahawk.pdf" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Descargar el informe CFD (PDF) &rarr;</a></p>` }
         ]
       },
       {

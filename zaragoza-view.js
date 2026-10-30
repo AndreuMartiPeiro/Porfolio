@@ -49,7 +49,7 @@
                   y <strong>dimensionar la infraestructura de pista necesaria en la hora punta de diseño</strong> más exigente.
                 </p>
                 <div class="zaragoza-card-highlight">
-                  <span class="highlight-icon">🎯</span>
+                  <span class="highlight-icon"></span>
                   <div>
                     <strong>Criterio de ingeniería:</strong> Relacionar las series históricas de tráfico con la evolución macroeconómica (PIB) 
                     para determinar si la pista y terminal actuales podrán absorber el crecimiento previsto a 25 años vista.
@@ -92,7 +92,7 @@
                   Se eliminan íntegramente los <strong>24 meses correspondientes a 2020 y 2021</strong>, dejando una serie limpia de <strong>244 meses de operación regular</strong>.
                 </p>
                 <div class="zaragoza-card-highlight alert-highlight">
-                  <span class="highlight-icon">⚠️</span>
+                  <span class="highlight-icon"></span>
                   <div>
                     <strong>Justificación metodológica:</strong> En abril de 2020 el tráfico colapsó a solo <strong>4 pasajeros</strong> debido a las restricciones sanitarias. 
                     Mantener estos valores anómalos o los rebotes artificiales de 2021 habría distorsionado gravemente la tendencia de fondo, 
@@ -176,7 +176,7 @@
             <div class="math-card">
               <div class="math-label">Ecuación de la Media Móvil Centrada:</div>
               <div class="math-formula">
-                MM<sub>t</sub> = &frac1{12} &times; [ 0,5 &middot; X<sub>t&minus;6</sub> + X<sub>t&minus;5</sub> + &hellip; + X<sub>t+5</sub> + 0,5 &middot; X<sub>t+6</sub> ]
+                MM<sub>t</sub> = (1/12) &times; [ 0,5 &middot; X<sub>t&minus;6</sub> + X<sub>t&minus;5</sub> + &hellip; + X<sub>t+5</sub> + 0,5 &middot; X<sub>t+6</sub> ]
               </div>
             </div>
 
@@ -258,7 +258,7 @@
               <div class="math-label">Cálculo del Índice Mensual y Control de Suma:</div>
               <div class="math-formula">
                 I<sub>t</sub> = &frac{X<sub>t</sub>}{MM<sub>t</sub>}, &emsp; 
-                I<sub>m</sub> = &frac1{N} &sum; I<sub>t</sub>, &emsp; 
+                I<sub>m</sub> = (1/N) &sum; I<sub>t</sub>, &emsp; 
                 &sum;<sub>m=1</sub><sup>12</sup> I<sub>m</sub> &asymp; 12
               </div>
             </div>
@@ -483,7 +483,7 @@
               </div>
 
               <div class="runway-conclusion-box">
-                <div class="conclusion-icon">✅</div>
+                <div class="conclusion-icon is-ok"></div>
                 <div class="conclusion-text">
                   <strong>Dictamen Técnico:</strong> Con una demanda pico de solo <strong>5,2 operaciones/hora</strong> en el año 2050, 
                   <strong>una única pista opera a apenas el 13% de su capacidad</strong>. La infraestructura existente en el Aeropuerto de Zaragoza 
@@ -653,18 +653,18 @@
   // ETAPA 2: ESTACIONALIDAD
   // ==========================================
   const SEASON_INFO = {
-    "Ene": { season: "Baja", desc: "Mes valle invernal (-29% vs media). Salidas 0,74 / Llegadas 0,68.", color: "#4a90e2" },
-    "Feb": { season: "Baja", desc: "Mínima actividad turística (-24% vs media). Salidas 0,76 / Llegadas 0,76.", color: "#4a90e2" },
-    "Mar": { season: "Media", desc: "Próximo a la media (-2%). Comienzo de temporada de primavera.", color: "#e6a23c" },
-    "Abr": { season: "Media", desc: "Ligero repunte (+5%) impulsado por Semana Santa.", color: "#e6a23c" },
-    "May": { season: "Media", desc: "Mes moderado (-9% vs media).", color: "#e6a23c" },
-    "Jun": { season: "Media", desc: "Inicio del verano (+2%). Mayor peso en salidas (1,05).", color: "#e6a23c" },
-    "Jul": { season: "Alta", desc: "Temporada alta de vacaciones (+35% vs media). Gran volumen de vuelos chárter.", color: "#c75b39" },
-    "Ago": { season: "Alta", desc: "MÁXIMO ANUAL (+42% vs media). Mes de diseño del aeropuerto. Salidas 1,42 / Llegadas 1,43.", color: "#e74c3c" },
-    "Sep": { season: "Alta", desc: "Cierre vacacional (+13%). Predominio de llegadas (1,16) por retornos.", color: "#c75b39" },
-    "Oct": { season: "Media", desc: "Muy equilibrado con el mes medio (-2%). Fiestas del Pilar.", color: "#e6a23c" },
-    "Nov": { season: "Baja", desc: "Temporada baja otoñal (-22% vs media).", color: "#4a90e2" },
-    "Dic": { season: "Media", desc: "Efecto de festividades navideñas (-12% vs media). Llegadas (0,92) superiores a salidas.", color: "#e6a23c" }
+    "Ene": { season: "Baja", desc: "Mes valle invernal (-29% vs media). Salidas 0,74 / Llegadas 0,68.", color: "#8aa1b9" },
+    "Feb": { season: "Baja", desc: "Mínima actividad turística (-24% vs media). Salidas 0,76 / Llegadas 0,76.", color: "#8aa1b9" },
+    "Mar": { season: "Media", desc: "Próximo a la media (-2%). Comienzo de temporada de primavera.", color: "#b4b4b8" },
+    "Abr": { season: "Media", desc: "Ligero repunte (+5%) impulsado por Semana Santa.", color: "#b4b4b8" },
+    "May": { season: "Media", desc: "Mes moderado (-9% vs media).", color: "#b4b4b8" },
+    "Jun": { season: "Media", desc: "Inicio del verano (+2%). Mayor peso en salidas (1,05).", color: "#b4b4b8" },
+    "Jul": { season: "Alta", desc: "Temporada alta de vacaciones (+35% vs media). Gran volumen de vuelos chárter.", color: "#e8552b" },
+    "Ago": { season: "Alta", desc: "MÁXIMO ANUAL (+42% vs media). Mes de diseño del aeropuerto. Salidas 1,42 / Llegadas 1,43.", color: "#e8552b" },
+    "Sep": { season: "Alta", desc: "Cierre vacacional (+13%). Predominio de llegadas (1,16) por retornos.", color: "#e8552b" },
+    "Oct": { season: "Media", desc: "Muy equilibrado con el mes medio (-2%). Fiestas del Pilar.", color: "#b4b4b8" },
+    "Nov": { season: "Baja", desc: "Temporada baja otoñal (-22% vs media).", color: "#8aa1b9" },
+    "Dic": { season: "Media", desc: "Efecto de festividades navideñas (-12% vs media). Llegadas (0,92) superiores a salidas.", color: "#b4b4b8" }
   };
 
   function setupSeasonalityEvents() {
@@ -730,13 +730,13 @@
       const val = match ? match.total : 1.0;
       totals.push(val);
       if (m === selectedSeasonMonth) {
-        colors.push('#c75b39'); // active accent
+        colors.push('#e8552b'); // active accent
       } else if (val >= 1.2) {
-        colors.push('rgba(199, 91, 57, 0.7)');
+        colors.push('rgba(232, 85, 43, 0.7)');
       } else if (val < 0.85) {
-        colors.push('rgba(74, 144, 226, 0.7)');
+        colors.push('rgba(138, 161, 185, 0.7)');
       } else {
-        colors.push('rgba(230, 162, 60, 0.6)');
+        colors.push('rgba(180, 180, 184, 0.55)');
       }
     });
 
@@ -744,19 +744,19 @@
       x: months,
       y: totals,
       type: 'bar',
-      marker: { color: colors, line: { color: '#0d0d0d', width: 1.5 } },
+      marker: { color: colors, line: { color: '#0d0d0e', width: 1.5 } },
       text: totals.map(v => v.toFixed(2)),
       textposition: 'outside',
       cliponaxis: false
     }];
 
     const layout = {
-      title: { text: 'Índice Estacional Medio Mensual (Base = 1,00)', font: { color: '#e0ddd9', size: 14 } },
+      title: { text: 'Índice Estacional Medio Mensual (Base = 1,00)', font: { color: '#ededec', size: 14 } },
       paper_bgcolor: 'transparent',
       plot_bgcolor: 'transparent',
       margin: { l: 45, r: 20, t: 40, b: 35 },
-      xaxis: { color: '#9a9590', tickfont: { color: '#e0ddd9' } },
-      yaxis: { color: '#9a9590', range: [0, 1.6], tickvals: [0.5, 0.75, 1.0, 1.25, 1.5], gridcolor: 'rgba(255,255,255,0.06)' },
+      xaxis: { color: '#8e8e93', tickfont: { color: '#ededec' } },
+      yaxis: { color: '#8e8e93', range: [0, 1.6], tickvals: [0.5, 0.75, 1.0, 1.25, 1.5], gridcolor: 'rgba(255,255,255,0.06)' },
       shapes: [{
         type: 'line',
         x0: -0.5,
@@ -830,13 +830,13 @@
     if (alertBanner) {
       if (includeOutlier2025) {
         alertBanner.innerHTML = `
-          <strong>⚠️ Hallazgo de Auditoría (Apartado 7 del informe):</strong> El trimestre 2025 T4 solo computó el mes de octubre (59.066 pax en vez de un trimestre completo ~177k). 
+          <strong>Hallazgo de Auditoría (Apartado 7 del informe):</strong> El trimestre 2025 T4 solo computó el mes de octubre (59.066 pax en vez de un trimestre completo ~177k). 
           Este punto aislado (esquina inferior derecha) reduce artificialmente la elasticidad a <strong>&epsilon; = 1,07</strong>. Desactiva el toggle para ver la corrección.
         `;
         alertBanner.className = 'regression-info-banner alert-warning';
       } else {
         alertBanner.innerHTML = `
-          <strong>✅ Serie Depurada:</strong> Al eliminar el trimestre incompleto de 2025, la elasticidad asciende a <strong>&epsilon; = 1,50</strong> 
+          <strong>Serie Depurada:</strong> Al eliminar el trimestre incompleto de 2025, la elasticidad asciende a <strong>&epsilon; = 1,50</strong> 
           y el R² se duplica (de 0,11 a 0,22). Con esta elasticidad real, la proyección a 2050 alcanzaría 1,24 M en escenario base y 1,60 M en optimista.
         `;
         alertBanner.className = 'regression-info-banner alert-success';
@@ -855,7 +855,7 @@
       mode: 'markers',
       type: 'scatter',
       name: 'Trimestres (2004–2025)',
-      marker: { color: 'rgba(199, 91, 57, 0.75)', size: 8, line: { color: '#c75b39', width: 1 } }
+      marker: { color: 'rgba(232, 85, 43, 0.75)', size: 8, line: { color: '#e8552b', width: 1 } }
     };
 
     const traceLine = {
@@ -864,7 +864,7 @@
       mode: 'lines',
       type: 'scatter',
       name: `Ajuste: &epsilon; = ${slope.toFixed(2)} (R² = ${r2.toFixed(2)})`,
-      line: { color: '#8a9a5b', width: 2.5 }
+      line: { color: '#8aa1b9', width: 2.5 }
     };
 
     const traces = [tracePoints, traceLine];
@@ -879,19 +879,19 @@
         name: '2025 T4 (Incompleto)',
         text: ['2025 T4 (Outlier)'],
         textposition: 'top left',
-        textfont: { color: '#ff6b6b' },
-        marker: { color: '#ff6b6b', size: 12, symbol: 'diamond' }
+        textfont: { color: '#e8552b' },
+        marker: { color: '#e8552b', size: 12, symbol: 'diamond' }
       });
     }
 
     const layout = {
-      title: { text: `Dispersión ln(PIB) vs ln(Media Móvil Trimestral Tráfico)`, font: { color: '#e0ddd9', size: 14 } },
+      title: { text: `Dispersión ln(PIB) vs ln(Media Móvil Trimestral Tráfico)`, font: { color: '#ededec', size: 14 } },
       paper_bgcolor: 'transparent',
       plot_bgcolor: 'transparent',
       margin: { l: 50, r: 25, t: 45, b: 45 },
-      xaxis: { title: 'ln(Índice PIB Trimestral)', color: '#9a9590', gridcolor: 'rgba(255,255,255,0.06)' },
-      yaxis: { title: 'ln(Tráfico Trimestral)', color: '#9a9590', gridcolor: 'rgba(255,255,255,0.06)' },
-      legend: { font: { color: '#e0ddd9' }, orientation: 'h', y: -0.22 }
+      xaxis: { title: 'ln(Índice PIB Trimestral)', color: '#8e8e93', gridcolor: 'rgba(255,255,255,0.06)' },
+      yaxis: { title: 'ln(Tráfico Trimestral)', color: '#8e8e93', gridcolor: 'rgba(255,255,255,0.06)' },
+      legend: { font: { color: '#ededec' }, orientation: 'h', y: -0.22 }
     };
 
     Plotly.react(chartDiv, traces, layout, { responsive: true, displayModeBar: false });

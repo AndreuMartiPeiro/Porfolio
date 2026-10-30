@@ -7,23 +7,14 @@
 <meta name="description" content="Modelo CAD de un misil de crucero tipo Tomahawk a escala ≈ 1:20, diseñado en SolidWorks. Visor 3D interactivo, medidas por componente y planos acotados.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 <style>
+  /* Paleta del sistema de diseño del portfolio (DESIGN.md): grafito + naranja-rojo + azul acero */
   :root {
-    --bg: #f6f7f9; --surface: #ffffff; --ink: #0f172a; --muted: #5b6474; --line: #e2e6ec;
-    --accent: #c08a3e; --accent-ink: #8a5c1f; --stage: #0f172a; --stage-ink: #e6ebf2;
-    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0b1120; --surface: #111a2e; --ink: #e6ebf2; --muted: #94a0b4; --line: #1f2a40;
-      --accent: #d6a45a; --accent-ink: #e2b878; --stage: #070c18;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0b1120; --surface: #111a2e; --ink: #e6ebf2; --muted: #94a0b4; --line: #1f2a40;
-    --accent: #d6a45a; --accent-ink: #e2b878; --stage: #070c18;
+    --bg: #0d0d0e; --surface: #131315; --ink: #ededec; --muted: #8e8e93; --line: rgba(255,255,255,.08);
+    --accent: #e8552b; --accent-ink: #ff6b3d; --stage: #131315; --stage-ink: #ededec;
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace; --display: "Inter Tight", Inter, system-ui, sans-serif;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -34,19 +25,19 @@
   header.hero { background: var(--stage); color: var(--stage-ink); }
   .hero .wrap { padding-top: 40px; }
   .eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-  h1 { font-size: clamp(30px, 5vw, 52px); line-height: 1.05; margin: 12px 0 10px; letter-spacing: -.02em; }
-  .lede { max-width: 680px; color: #b7c1d1; margin: 0; }
+  h1 { font-family: var(--display); font-weight: 500; font-size: clamp(30px, 5vw, 52px); line-height: 1.05; margin: 12px 0 10px; letter-spacing: -.02em; }
+  .lede { max-width: 680px; color: #b4b4b8; margin: 0; }
   model-viewer { display: block; width: 100%; height: min(62vh, 560px); background-color: var(--stage); outline: none; --poster-color: transparent; }
-  .viewer-hint { font: 12px var(--mono); color: #7d8aa0; text-align: center; padding: 0 0 18px; }
+  .viewer-hint { font: 12px var(--mono); color: #8e8e93; text-align: center; padding: 0 0 18px; }
   .views { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding-bottom: 28px; }
   .views button {
-    font: 500 13px Inter, sans-serif; color: var(--stage-ink); background: #1b2540; border: 1px solid #2a3656;
+    font: 500 13px Inter, sans-serif; color: var(--stage-ink); background: #19191b; border: 1px solid #2c2c30;
     padding: 7px 14px; border-radius: 999px; cursor: pointer;
   }
   .views button:hover, .views button[aria-pressed="true"] { border-color: var(--accent); color: #fff; }
 
   section { padding: 48px 0 8px; }
-  h2 { font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
   .sub { color: var(--muted); margin: 0 0 22px; }
   .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
   .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }

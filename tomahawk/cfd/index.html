@@ -7,7 +7,7 @@
 <meta name="description" content="Análisis aerodinámico CFD del misil Tomahawk a escala 1:20 en ANSYS Fluent: Mach 0,72 a nivel del mar. Visor 3D interactivo de resultados, coeficientes, validación y comparación con el empuje del motor F107.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>if (/[?&]embed/.test(location.search)) document.documentElement.classList.add("embed");</script>
 <script type="importmap">
 { "imports": {
@@ -16,21 +16,12 @@
 } }
 </script>
 <style>
+  /* Paleta del sistema de diseño del portfolio (DESIGN.md): grafito + naranja-rojo + azul acero */
   :root {
-    --bg: #f6f7f9; --surface: #ffffff; --ink: #0f172a; --muted: #5b6474; --line: #e2e6ec;
-    --accent: #c08a3e; --accent-ink: #8a5c1f; --stage: #0f172a; --stage-ink: #e6ebf2; --stage-muted: #94a0b4;
-    --s1: #2a78d6; --s2: #eb6834; --grid: #e7e9ee;
-    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0b1120; --surface: #111a2e; --ink: #e6ebf2; --muted: #94a0b4; --line: #1f2a40;
-      --accent: #d6a45a; --accent-ink: #e2b878; --stage: #070c18; --s1: #3987e5; --s2: #d95926; --grid: #1f2a40;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0b1120; --surface: #111a2e; --ink: #e6ebf2; --muted: #94a0b4; --line: #1f2a40;
-    --accent: #d6a45a; --accent-ink: #e2b878; --stage: #070c18; --s1: #3987e5; --s2: #d95926; --grid: #1f2a40;
+    --bg: #0d0d0e; --surface: #131315; --ink: #ededec; --muted: #8e8e93; --line: rgba(255,255,255,.08);
+    --accent: #e8552b; --accent-ink: #ff6b3d; --stage: #131315; --stage-ink: #ededec; --stage-muted: #8e8e93;
+    --s1: #8aa1b9; --s2: #e8552b; --grid: rgba(255,255,255,.07);
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace; --display: "Inter Tight", Inter, system-ui, sans-serif;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -40,30 +31,30 @@
   header.hero { background: var(--stage); color: var(--stage-ink); }
   .hero .wrap { padding-top: 36px; padding-bottom: 18px; }
   .eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-  h1 { font-size: clamp(30px, 5vw, 50px); line-height: 1.05; margin: 12px 0 10px; letter-spacing: -.02em; }
-  .lede { max-width: 720px; color: #b7c1d1; margin: 0; }
-  .back { font: 13px var(--mono); color: #9fb0c8; text-decoration: none; }
+  h1 { font-family: var(--display); font-weight: 500; font-size: clamp(30px, 5vw, 50px); line-height: 1.05; margin: 12px 0 10px; letter-spacing: -.02em; }
+  .lede { max-width: 720px; color: #b4b4b8; margin: 0; }
+  .back { font: 13px var(--mono); color: #b4b4b8; text-decoration: none; }
 
   /* --- visor --- */
   .stage { position: relative; height: min(70vh, 640px); min-height: 420px; background: var(--stage); }
   .stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
-  .panel { position: absolute; top: 12px; left: 12px; width: 236px; background: rgba(13,20,38,.88); border: 1px solid #24304d;
-    border-radius: 12px; padding: 12px 14px; color: var(--stage-ink); font-size: 13px; backdrop-filter: blur(6px); }
+  .panel { position: absolute; top: 12px; left: 12px; width: 236px; background: rgba(19,19,21,.9); border: 1px solid #2c2c30;
+    border-radius: 8px; padding: 12px 14px; color: var(--stage-ink); font-size: 13px; backdrop-filter: blur(6px); }
   .panel h4 { margin: 0 0 6px; font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--stage-muted); }
   .panel label { display: flex; align-items: center; gap: 8px; padding: 2px 0; cursor: pointer; }
-  .panel select { width: 100%; font: 13px Inter, sans-serif; color: var(--stage-ink); background: #18223b; border: 1px solid #2a3656; border-radius: 8px; padding: 5px 8px; margin-bottom: 10px; }
+  .panel select { width: 100%; font: 13px Inter, sans-serif; color: var(--stage-ink); background: #19191b; border: 1px solid #2c2c30; border-radius: 8px; padding: 5px 8px; margin-bottom: 10px; }
   .panel .grp + .grp { margin-top: 8px; }
   .legends { position: absolute; right: 12px; bottom: 12px; display: grid; gap: 8px; width: 230px; }
-  .legend { background: rgba(13,20,38,.88); border: 1px solid #24304d; border-radius: 10px; padding: 8px 10px 6px; color: var(--stage-ink); }
+  .legend { background: rgba(19,19,21,.9); border: 1px solid #2c2c30; border-radius: 10px; padding: 8px 10px 6px; color: var(--stage-ink); }
   .legend .t { font-size: 12px; margin-bottom: 4px; }
   .legend canvas { width: 100%; height: 10px; border-radius: 3px; display: block; }
   .legend .ticks { display: flex; justify-content: space-between; font: 11px var(--mono); color: var(--stage-muted); margin-top: 3px; }
-  .tip { position: absolute; pointer-events: none; background: #f8fafc; color: #0f172a; border-radius: 8px; padding: 6px 9px; font: 12px/1.35 var(--mono);
+  .tip { position: absolute; pointer-events: none; background: #f8fafc; color: #0d0d0e; border-radius: 8px; padding: 6px 9px; font: 12px/1.35 var(--mono);
     box-shadow: 0 6px 18px rgba(0,0,0,.35); transform: translate(12px, 12px); display: none; white-space: nowrap; }
   .views { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding: 14px 0 6px; }
-  .views button { font: 500 13px Inter, sans-serif; color: var(--stage-ink); background: #1b2540; border: 1px solid #2a3656; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+  .views button { font: 500 13px Inter, sans-serif; color: var(--stage-ink); background: #19191b; border: 1px solid #2c2c30; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
   .views button:hover, .views button[aria-pressed="true"] { border-color: var(--accent); color: #fff; }
-  .viewer-hint { font: 12px var(--mono); color: #7d8aa0; text-align: center; padding: 0 0 22px; }
+  .viewer-hint { font: 12px var(--mono); color: #8e8e93; text-align: center; padding: 0 0 22px; }
   .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--stage-muted); font: 13px var(--mono); }
   @media (max-width: 720px) {
     .stage { height: 62vh; }
@@ -74,7 +65,7 @@
 
   /* --- contenido --- */
   section { padding: 44px 0 6px; }
-  h2 { font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
   .sub { color: var(--muted); margin: 0 0 20px; max-width: 760px; }
   .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
   .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
@@ -292,7 +283,7 @@ const stage = document.getElementById('stage');
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setClearColor(getComputedStyle(document.documentElement).getPropertyValue('--stage').trim() || '#0f172a');
+renderer.setClearColor(getComputedStyle(document.documentElement).getPropertyValue('--stage').trim() || '#0d0d0e');
 stage.prepend(renderer.domElement);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(30, 1, 1, 20000);
