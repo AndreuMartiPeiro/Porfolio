@@ -307,7 +307,7 @@ const MODES = {
   presion: { show: ['misil', 'plano_alas', 'plano_vertical'], wall: 'none', field: 'p', title: 'Presión estática' },
   psup:    { show: ['misil'], wall: 'p', title: 'Presión sobre el misil' },
   fric:    { show: ['misil'], wall: 'cf', title: 'Fricción sobre el misil' },
-  lineas:  { show: ['misil', 'plano_vertical', 'streamlines'], wall: 'none', field: 'mach', half: true, view: 'isoB', title: 'Líneas de corriente · Mach' } };
+  lineas:  { show: ['misil', 'streamlines'], wall: 'none', field: 'mach', title: 'Líneas de corriente · Mach' } };
 const state = { mode: 'mach' };
 
 function arrays(buf, layout) {
@@ -332,7 +332,7 @@ async function load() {
   for (const { o, A } of datas) {
     if (o.kind === 'lines') {
       const off = A.offsets, idx = [], col = new Float32Array(A.mach.length * 3);
-      for (let s = 0; s + 1 < off.length; s++) for (let i = off[s]; i < off[s + 1] - 1; i++) if (A.position[i * 3 + 2] <= 0.5 && A.position[i * 3 + 5] <= 0.5) idx.push(i, i + 1);
+      for (let s = 0; s + 1 < off.length; s++) for (let i = off[s]; i < off[s + 1] - 1; i++) idx.push(i, i + 1);
       for (let i = 0; i < A.mach.length; i++) col.set(colorAt(RANGES.field.mach, A.mach[i]), i * 3);
       const pos = new Float32Array(idx.length * 3), cc = new Float32Array(idx.length * 3);
       idx.forEach((v, j) => { pos.set(A.position.subarray(v * 3, v * 3 + 3), j * 3); cc.set(col.subarray(v * 3, v * 3 + 3), j * 3); });
