@@ -186,7 +186,7 @@ const MODES = {
   presion: { show: ['misil', 'plano_alas', 'plano_vertical'], wall: 'none', field: 'p', title: 'Presión estática' },
   psup:    { show: ['misil'], wall: 'p', title: 'Presión sobre el misil' },
   fric:    { show: ['misil'], wall: 'cf', title: 'Fricción sobre el misil' },
-  lineas:  { show: ['misil', 'plano_vertical', 'lineas'], wall: 'none', field: 'mach', half: true, view: 'isoB', title: 'Líneas de corriente · Mach' } };
+  lineas:  { show: ['misil', 'lineas'], wall: 'none', field: 'mach', title: 'Líneas de corriente · Mach' } };
 const S = { mode: 'mach', aC: 0, aT: 0, playing: false };
 const objs = {}; let M, G, A = [];
 
@@ -213,7 +213,7 @@ function addSurface(id) {
 }
 let LN, LNP, LNC, NL, NP;
 function addLines() {
-  NL = M.nlines; NP = M.npts; const segs = NL * (NP - 1);
+  NL = M.nlines; NP = M.npts; const segs = NL * (NP - 1) * 2;          // la mitad calculada + su simétrica respecto al plano z = 0
   LN = new LineSegmentsGeometry(); LN.setPositions(new Float32Array(segs * 6)); LN.setColors(new Float32Array(segs * 6));
   LNP = LN.attributes.instanceStart.data; LNC = LN.attributes.instanceColorStart.data;
   const mat = new LineMaterial({ vertexColors: true, linewidth: 1.8, worldUnits: false });
@@ -227,9 +227,10 @@ function updateLines() {
   const [lo, hi] = M.ranges.field.mach.length ? [0, M.ranges.field.mach[1]] : [0, 1];
   const pos = LNP.array, col = LNC.array; let s = 0;
   const rgb = (v, o) => { const t = Math.max(0, Math.min(255, Math.round((v - lo) / (hi - lo) * 255))) * 4; col[o] = LUT[t] / 255; col[o + 1] = LUT[t + 1] / 255; col[o + 2] = LUT[t + 2] / 255; };
-  for (let l = 0; l < NL; l++) for (let k = 0; k < NP - 1; k++) {
+  for (let mir = 0; mir < 2; mir++) for (let l = 0; l < NL; l++) for (let k = 0; k < NP - 1; k++) {
     const p0 = (l * NP + k) * 3, p1 = p0 + 3, m0 = l * NP + k;
     for (let c = 0; c < 3; c++) { pos[s * 6 + c] = pa[p0 + c] + (pb[p0 + c] - pa[p0 + c]) * f; pos[s * 6 + 3 + c] = pa[p1 + c] + (pb[p1 + c] - pa[p1 + c]) * f; }
+    if (mir) { pos[s * 6 + 2] *= -1; pos[s * 6 + 5] *= -1; }
     rgb(ma[m0] + (mb[m0] - ma[m0]) * f, s * 6); rgb(ma[m0 + 1] + (mb[m0 + 1] - ma[m0 + 1]) * f, s * 6 + 3); s++;
   }
   LNP.needsUpdate = true; LNC.needsUpdate = true;
