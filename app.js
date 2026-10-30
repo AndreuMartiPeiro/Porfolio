@@ -107,7 +107,7 @@
   }
 
   // ========== Render Project ==========
-  function renderProject(projectId) {
+  function renderProject(projectId, subId) {
     const project = PROJECTS.find(p => p.id === projectId);
     if (!project) { navigateTo(''); return; }
 
@@ -133,9 +133,30 @@
     tabsEl.innerHTML = '';
 
     if (projectId === 'zaragoza') {
-      if (typeof window.renderZaragozaProject === 'function') {
-        window.renderZaragozaProject(contentEl);
-      }
+      const showPhase = (fase) => {
+        if (fase.id === 'demanda') {
+          if (typeof window.renderZaragozaProject === 'function') window.renderZaragozaProject(contentEl);
+        } else if (typeof window.renderLezgFase === 'function') {
+          window.renderLezgFase(fase.id, contentEl);
+        }
+      };
+      const fases = window.LEZG_FASES || [{ id: 'demanda', label: 'Demanda 2025–2050' }];
+      const inicial = fases.find(f => f.id === subId) || fases[0];
+      fases.forEach((fase, i) => {
+        const tab = document.createElement('button');
+        tab.className = 'section-tab' + (fase === inicial ? ' active' : '') + (fase.pending ? ' pending' : '');
+        tab.innerHTML = `<span class="section-tab-icon">${i + 1}</span> ${fase.label}`;
+        if (fase.pending) tab.title = 'Próximamente';
+        tab.addEventListener('click', () => {
+          tabsEl.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          // Enlace directo a la fase sin volver a disparar el enrutado
+          history.replaceState(null, '', `#/project/${projectId}/${fase.id}`);
+          showPhase(fase);
+        });
+        tabsEl.appendChild(tab);
+      });
+      showPhase(inicial);
       return;
     }
 
@@ -684,7 +705,7 @@
 
   function handleRoute() {
     const hash = window.location.hash || '#/';
-    const projectMatch = hash.match(/#\/project\/(.+)/);
+    const projectMatch = hash.match(/#\/project\/([^/]+)(?:\/([^/]+))?/);
 
     if (projectMatch) {
       const projectId = projectMatch[1];
@@ -692,7 +713,7 @@
       projectView.style.display = 'block';
       projectView.classList.add('active');
       backBtn.classList.add('visible');
-      renderProject(projectId);
+      renderProject(projectId, projectMatch[2]);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       landingView.style.display = 'block';
